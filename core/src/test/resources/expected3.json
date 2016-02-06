@@ -1,0 +1,125 @@
+{
+  "a1" : {
+    "count" : 1,
+    "max" : 100,
+    "min" : 100,
+    "avg" : 100,
+    "parentAvgCount" : 0,
+    "children" : {
+      "a11" : {
+        "count" : 2,
+        "max" : 20,
+        "min" : 10,
+        "avg" : 15,
+        "parentAvgCount" : 2,
+        "children" : {
+          "a111" : {
+            "count" : 1,
+            "max" : 2,
+            "min" : 2,
+            "avg" : 2,
+            "parentAvgCount" : 1,
+            "children" : null
+          },
+          "a112" : {
+            "count" : 1,
+            "max" : 3,
+            "min" : 3,
+            "avg" : 3,
+            "parentAvgCount" : 1,
+            "children" : null
+          },
+          "a113" : {
+            "count" : 1,
+            "max" : 5,
+            "min" : 5,
+            "avg" : 5,
+            "parentAvgCount" : 1,
+            "children" : null
+          }
+        }
+      },
+      "a13" : {
+        "count" : 3,
+        "max" : 20,
+        "min" : 20,
+        "avg" : 20,
+        "parentAvgCount" : 3,
+        "children" : null
+      },
+      "a111" : {
+        "count" : 1,
+        "max" : 4,
+        "min" : 4,
+        "avg" : 4,
+        "parentAvgCount" : 1,
+        "children" : null
+      }
+    }
+  },
+  "a11" : {
+    "count" : 2,
+    "max" : 20,
+    "min" : 10,
+    "avg" : 15,
+    "parentAvgCount" : 0,
+    "children" : {
+      "a111" : {
+        "count" : 1,
+        "max" : 2,
+        "min" : 2,
+        "avg" : 2,
+        "parentAvgCount" : 1,
+        "children" : null
+      },
+      "a112" : {
+        "count" : 1,
+        "max" : 3,
+        "min" : 3,
+        "avg" : 3,
+        "parentAvgCount" : 1,
+        "children" : null
+      },
+      "a113" : {
+        "count" : 1,
+        "max" : 5,
+        "min" : 5,
+        "avg" : 5,
+        "parentAvgCount" : 1,
+        "children" : null
+      }
+    }
+  },
+  "a13" : {
+    "count" : 3,
+    "max" : 20,
+    "min" : 20,
+    "avg" : 20,
+    "parentAvgCount" : 0,
+    "children" : null
+  },
+  "a111" : {
+    "count" : 2,
+    "max" : 4,
+    "min" : 2,
+    "avg" : 3,
+    "parentAvgCount" : 0,
+    "children" : null
+  },
+  "a112" : {
+    "count" : 1,
+    "max" : 3,
+    "min" : 3,
+    "avg" : 3,
+    "parentAvgCount" : 0,
+    "children" : null
+  },
+  "a113" : {
+    "count" : 1,
+    "max" : 5,
+    "min" : 5,
+    "avg" : 5,
+    "parentAvgCount" : 0,
+    "children" : null
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "a1" : {
+    "count" : 1,
+    "max" : 100,
+    "min" : 100,
+    "avg" : 100,
+    "parentAvgCount" : 0,
+    "children" : {
+      "a11" : {
+        "count" : 1,
+        "max" : 10,
+        "min" : 10,
+        "avg" : 10,
+        "parentAvgCount" : 1,
+        "children" : {
+          "a111" : {
+            "count" : 1,
+            "max" : 2,
+            "min" : 2,
+            "avg" : 2,
+            "parentAvgCount" : 1,
+            "children" : null
+          }
+        }
+      }
+    }
+  },
+  "a11" : {
+    "count" : 1,
+    "max" : 10,
+    "min" : 10,
+    "avg" : 10,
+    "parentAvgCount" : 0,
+    "children" : {
+      "a111" : {
+        "count" : 1,
+        "max" : 2,
+        "min" : 2,
+        "avg" : 2,
+        "parentAvgCount" : 1,
+        "children" : null
+      }
+    }
+  },
+  "a111" : {
+    "count" : 1,
+    "max" : 2,
+    "min" : 2,
+    "avg" : 2,
+    "parentAvgCount" : 0,
+    "children" : null
+  }
+}
