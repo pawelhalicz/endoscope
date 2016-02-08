@@ -59,7 +59,7 @@ public class Stats {
 
             subcalls.entrySet().stream().forEach( entry -> {
                 Stat childStat = parentStat.children.get(entry.getKey());
-                childStat.updateParentAvgCount(entry.getValue());
+                childStat.updateAvgHits(entry.getValue());
             });
         }
     }

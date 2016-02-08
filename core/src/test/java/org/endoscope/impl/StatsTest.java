@@ -1,5 +1,6 @@
 package org.endoscope.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -120,6 +121,35 @@ public class StatsTest {
                 if( i % 100000 == 0 ){
                     System.gc();
                     System.out.println(i + " ~ " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1024*1024) - before) + " MB" );
+                }
+                stats.store(new Context("" + i, 1L));
+            }
+            stats.process( map -> {
+                Assert.assertEquals(map.size(), 1000001);//make sure we didn't hit the limit
+            });
+        });
+    }
+
+    //estimate json doc size
+    @Ignore
+    @Test
+    public void estimate_json_stats_size(){
+        ObjectMapper om = new ObjectMapper();
+        withProperty("endoscope.max.stat.count", "10000000", ()->{
+            Stats stats = new Stats();
+            for( long i=0; i<1000001; i++){
+                if( i % 100000 == 0 ){
+                    final long ii = i;
+                    stats.process(map -> {
+                        try{
+                            File out = File.createTempFile("endoscope-tmp", ".json");
+                            om.writeValue(out, map);
+                            System.out.println( ii + " ~ " + (out.length()/(1024*1024)) + " MB");
+                            out.delete();
+                        }catch(IOException e){
+                            throw new RuntimeException(e);
+                        }
+                    });
                 }
                 stats.store(new Context("" + i, 1L));
             }

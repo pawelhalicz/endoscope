@@ -126,7 +126,7 @@
     var buildRowHtml = function(id, obj, level){
         var clazz = '';
         var data = '';
-        var count = obj.count;
+        var count = obj.hits;
         if( obj.children ){
             clazz += " has-children";
         }
@@ -134,7 +134,7 @@
             data = id;
             clazz += ' parent'
         } else {
-            count = obj.parentAvgCount;;
+            count = obj.ah10;
             clazz += ' child'
         }
 

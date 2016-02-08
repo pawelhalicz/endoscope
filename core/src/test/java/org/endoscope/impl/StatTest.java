@@ -38,21 +38,21 @@ public class StatTest {
         Stat s = new Stat();
 
         s.update(10);
-        s.updateParentAvgCount(100);
+        s.updateAvgHits(100);
 
         Assert.assertEquals(10, s.max);
         Assert.assertEquals(10, s.min);
         Assert.assertEquals(10, s.avg);
-        Assert.assertEquals(1, s.count);
-        Assert.assertEquals(100, s.parentAvgCount);
+        Assert.assertEquals(1, s.hits);
+        Assert.assertEquals(100, s.ah10);
 
         s.update(20);
-        s.updateParentAvgCount(200);
+        s.updateAvgHits(200);
 
         Assert.assertEquals(20, s.max);
         Assert.assertEquals(10, s.min);
         Assert.assertEquals(15, s.avg);
-        Assert.assertEquals(2, s.count);
-        Assert.assertEquals(150, s.parentAvgCount);
+        Assert.assertEquals(2, s.hits);
+        Assert.assertEquals(150, s.ah10);
     }
 }

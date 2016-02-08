@@ -5,22 +5,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Stat {
-    long count = 0;
+    long hits = 0;
     long max = -1;//not set
     long min = 0;
     long avg = 0;
     long parentCount = 0;//when method is called N time for the same parent we add just 1 here
-    long parentAvgCount = 0;
+    long ah10 = 0; //average hit count in context of the same parent
     Map<String, Stat> children;
 
     public Stat(){}
 
-    public long getCount() {
-        return count;
+    public long getHits() {
+        return hits;
     }
 
-    public void setCount(long count) {
-        this.count = count;
+    public void setHits(long hits) {
+        this.hits = hits;
     }
 
     public long getMax() {
@@ -47,12 +47,12 @@ public class Stat {
         this.avg = avg;
     }
 
-    public long getParentAvgCount() {
-        return parentAvgCount;
+    public long getAh10() {
+        return ah10;
     }
 
-    public void setParentAvgCount(long parentAvgCount) {
-        this.parentAvgCount = parentAvgCount;
+    public void setAh10(long ah10) {
+        this.ah10 = ah10;
     }
 
     public Map<String, Stat> getChildren() {
@@ -90,13 +90,13 @@ public class Stat {
         } else {
             max = Math.max(max, time);
             min = Math.min(min, time);
-            avg = (avg*count + time)/(count+1);
+            avg = (avg* hits + time)/(hits +1);
         }
-        count++;
+        hits++;
     }
 
-    public void updateParentAvgCount(long hitsPerParent) {
-        parentAvgCount = (parentAvgCount*parentCount + hitsPerParent)/(parentCount+1);
+    public void updateAvgHits(long hitsPerParent) {
+        ah10 = (ah10 *parentCount + hitsPerParent)/(parentCount+1);
         parentCount++;
     }
 }

@@ -80,11 +80,11 @@ public class TheRestController {
 
         map.forEach((id, stat) -> {
             sb.append("\"").append(id).append("\":{");
-            sb.append("\"count\":"  ).append(stat.getCount()).append(",");
+            sb.append("\"hits\":"  ).append(stat.getHits()).append(",");
             sb.append("\"max\":"    ).append(stat.getMax()  ).append(",");
             sb.append("\"min\":"    ).append(stat.getMin()  ).append(",");
             sb.append("\"avg\":"    ).append(stat.getAvg()  ).append(",");
-            sb.append("\"parentAvgCount\":").append(stat.getParentAvgCount()).append(",");
+            sb.append("\"ah10\":").append(stat.getAh10()).append(",");
             sb.append("\"children\":").append(stat.getChildren() == null ? null : EMPTY_MAP);//no comma here
             sb.append("},");
         });

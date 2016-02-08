@@ -1,43 +1,43 @@
 {
   "a1" : {
-    "count" : 1,
+    "hits" : 1,
     "max" : 100,
     "min" : 100,
     "avg" : 100,
-    "parentAvgCount" : 0,
+    "ah10" : 0,
     "children" : {
       "a11" : {
-        "count" : 1,
+        "hits" : 1,
         "max" : 10,
         "min" : 10,
         "avg" : 10,
-        "parentAvgCount" : 1,
+        "ah10" : 1,
         "children" : null
       },
       "a12" : {
-        "count" : 1,
+        "hits" : 1,
         "max" : 10,
         "min" : 10,
         "avg" : 10,
-        "parentAvgCount" : 1,
+        "ah10" : 1,
         "children" : null
       }
     }
   },
   "a11" : {
-    "count" : 1,
+    "hits" : 1,
     "max" : 10,
     "min" : 10,
     "avg" : 10,
-    "parentAvgCount" : 0,
+    "ah10" : 0,
     "children" : null
   },
   "a12" : {
-    "count" : 1,
+    "hits" : 1,
     "max" : 10,
     "min" : 10,
     "avg" : 10,
-    "parentAvgCount" : 0,
+    "ah10" : 0,
     "children" : null
   }
 }
