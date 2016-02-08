@@ -44,7 +44,7 @@ public class StatTest {
         Assert.assertEquals(10, s.min);
         Assert.assertEquals(10, s.avg);
         Assert.assertEquals(1, s.hits);
-        Assert.assertEquals(100, s.ah10);
+        Assert.assertEquals(1000, s.ah10);
 
         s.update(20);
         s.updateAvgHits(200);
@@ -53,6 +53,6 @@ public class StatTest {
         Assert.assertEquals(10, s.min);
         Assert.assertEquals(15, s.avg);
         Assert.assertEquals(2, s.hits);
-        Assert.assertEquals(150, s.ah10);
+        Assert.assertEquals(1500, s.ah10);
     }
 }

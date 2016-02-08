@@ -12,7 +12,7 @@ public class TheService {
     public String process(int level) {
         level--;
         for( int i=0; i<level; i++){
-            service1.process(level);
+            service1.randomTimes(level);
             service2.process(level);
         }
         return "OK";

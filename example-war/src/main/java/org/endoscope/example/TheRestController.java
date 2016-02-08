@@ -24,7 +24,7 @@ public class TheRestController {
     @Path("/process")
     @Produces({ "application/json" })
     public String process() {
-        int level = 4;
+        int level = 5;
         for( int i=0; i<level; i++){
             theService.process(level);
         }

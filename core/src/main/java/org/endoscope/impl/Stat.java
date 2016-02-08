@@ -10,7 +10,7 @@ public class Stat {
     long min = 0;
     long avg = 0;
     long parentCount = 0;//when method is called N time for the same parent we add just 1 here
-    long ah10 = 0; //average hit count in context of the same parent
+    long ah10 = 0; //average hit count in context of the same parent x10 (1 digit of precision)
     Map<String, Stat> children;
 
     public Stat(){}
@@ -47,6 +47,11 @@ public class Stat {
         this.avg = avg;
     }
 
+    /**
+     * Average hits x10 (1 digit of precision)
+     * Short name for JSON - no @JsonProperty in this module
+     * @return
+     */
     public long getAh10() {
         return ah10;
     }
@@ -96,7 +101,8 @@ public class Stat {
     }
 
     public void updateAvgHits(long hitsPerParent) {
-        ah10 = (ah10 *parentCount + hitsPerParent)/(parentCount+1);
+        //10x gives 1 digit of precision
+        ah10 = (ah10 * parentCount + 10 * hitsPerParent)/(parentCount+1);
         parentCount++;
     }
 }

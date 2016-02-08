@@ -11,7 +11,7 @@
         "max" : 10,
         "min" : 10,
         "avg" : 10,
-        "ah10" : 1,
+        "ah10" : 10,
         "children" : null
       },
       "a12" : {
@@ -19,7 +19,7 @@
         "max" : 10,
         "min" : 10,
         "avg" : 10,
-        "ah10" : 1,
+        "ah10" : 10,
         "children" : null
       }
     }

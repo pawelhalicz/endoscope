@@ -11,7 +11,7 @@
         "max" : 20,
         "min" : 10,
         "avg" : 15,
-        "ah10" : 2,
+        "ah10" : 20,
         "children" : null
       }
     }
