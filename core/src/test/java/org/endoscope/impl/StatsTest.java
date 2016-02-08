@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class StatsTest {
@@ -82,5 +83,49 @@ public class StatsTest {
     @Test
     public void should_collect_stats_3(){
         process("/input3.json", "/expected3.json");
+    }
+
+    @Test
+    public void should_limit_number_of_stats(){
+        //stats over limit will be ignored
+        withProperty("endoscope.max.stat.count", "2", ()->{
+            process("/input4.json", "/expected4.json");
+        });
+    }
+
+    private void withProperty(String name, String value, Runnable runnable) {
+        String previousValue = System.getProperty(name);
+        System.setProperty(name, value);
+        try{
+            runnable.run();
+        }finally{
+            if( previousValue == null ){
+                System.clearProperty(name);
+            } else {
+                System.setProperty(name, previousValue);
+            }
+        }
+    }
+
+    //estimate stats size
+    @Ignore
+    @Test
+    public void estimate_stats_size(){
+        withProperty("endoscope.max.stat.count", "10000000", ()->{
+            System.gc();
+            long before = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1024*1024);
+            System.out.println("Before: " + before + " MB");
+            Stats stats = new Stats();
+            for( long i=0; i<1000001; i++){
+                if( i % 100000 == 0 ){
+                    System.gc();
+                    System.out.println(i + " ~ " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1024*1024) - before) + " MB" );
+                }
+                stats.store(new Context("" + i, 1L));
+            }
+            stats.process( map -> {
+                Assert.assertEquals(map.size(), 1000001);//make sure we didn't hit the limit
+            });
+        });
     }
 }

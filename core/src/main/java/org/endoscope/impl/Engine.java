@@ -48,6 +48,7 @@ public class Engine {
     }
 
     //TODO this is ugly hack with access to internals  - for debug purposes only!!!
+    //TODO expose information that limit was reached
     public void process(Consumer<Map<String, Stat>> consumer){
         synchronized(stats){
             stats.process(consumer);

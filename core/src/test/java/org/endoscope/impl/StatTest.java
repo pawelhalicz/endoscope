@@ -21,12 +21,15 @@ public class StatTest {
     }
 
     @Test
-    public void should_get_child_or_create_new(){
+    public void should_get_existing_child(){
         Stat s = new Stat();
-        Stat child = s.getOrAddChild("x");
+        Stat child = s.getChild("x");
+        Assert.assertNull(child);
+
+        child = s.createChild("x");
         Assert.assertNotNull(s.children);
 
-        Stat child2 = s.getOrAddChild("x");
+        Stat child2 = s.getChild("x");
         Assert.assertSame(child, child2);
     }
 

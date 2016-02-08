@@ -13,6 +13,8 @@ public class Stat {
     long parentAvgCount = 0;
     Map<String, Stat> children;
 
+    public Stat(){}
+
     public long getCount() {
         return count;
     }
@@ -68,13 +70,16 @@ public class Stat {
     }
 
     @Transient
-    public Stat getOrAddChild(String id){
+    public Stat getChild(String id){
         ensureChildrenMap();
-        Stat child = children.get(id);
-        if( child == null ){
-            child = new Stat();
-            children.put(id, child);
-        }
+        return children.get(id);
+    }
+
+    @Transient
+    public Stat createChild(String id){
+        ensureChildrenMap();
+        Stat child = new Stat();
+        children.put(id, child);
         return child;
     }
 

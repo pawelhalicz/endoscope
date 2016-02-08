@@ -6,11 +6,13 @@ import java.util.function.Consumer;
 
 public class Stats {
     private Map<String, Stat> map = new HashMap<>();
+    private long statsLeft = Properties.getMaxStatCount();
 
     private Stat getOrAddParent(Context context) {
         Stat parentStat = map.get(context.id);
-        if( parentStat == null ){
+        if( parentStat == null && statsLeft > 0 ){
             parentStat = new Stat();
+            statsLeft--;
             map.put(context.id, parentStat);
         }
         return parentStat;
@@ -22,8 +24,10 @@ public class Stats {
 
     private void store(Context context, boolean firstPass){
         Stat root = getOrAddParent(context);
-        root.update(context.time);
-        store(context, root, firstPass);
+        if( root != null ){
+            root.update(context.time);
+            store(context, root, firstPass);
+        }
     }
 
     private void store(Context context, final Stat parentStat, boolean firstPass){
@@ -32,18 +36,24 @@ public class Stats {
             Map<String, Long> subcalls = new HashMap<>();
             context.children.stream().forEach( child -> {
                 Long perParent = subcalls.getOrDefault(child.id, 0L) + 1;
-                subcalls.put(child.id, perParent);
 
                 //update child stats
-                Stat childStat = parentStat.getOrAddChild(child.id);
-                childStat.update(child.time);
+                Stat childStat = parentStat.getChild(child.id);
+                if( childStat == null && statsLeft > 0 ){
+                    childStat = parentStat.createChild(child.id);
+                    statsLeft--;
+                }
+                if( childStat != null ){
+                    subcalls.put(child.id, perParent);
+                    childStat.update(child.time);
 
-                //recurse and update next level of child stats
-                store(child, childStat, firstPass);
+                    //recurse and update next level of child stats
+                    store(child, childStat, firstPass);
 
-                //recurse and update top level stats
-                if( firstPass ) {
-                    store(child, false);
+                    //recurse and update top level stats
+                    if( firstPass ) {
+                        store(child, false);
+                    }
                 }
             });
 

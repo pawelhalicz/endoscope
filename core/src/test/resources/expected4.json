@@ -1,0 +1,19 @@
+{
+  "a1" : {
+    "count" : 1,
+    "max" : 100,
+    "min" : 100,
+    "avg" : 100,
+    "parentAvgCount" : 0,
+    "children" : {
+      "a11" : {
+        "count" : 2,
+        "max" : 20,
+        "min" : 10,
+        "avg" : 15,
+        "parentAvgCount" : 2,
+        "children" : null
+      }
+    }
+  }
+}
