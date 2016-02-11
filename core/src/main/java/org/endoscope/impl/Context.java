@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Context {
-    String id;
-    long time;
-    List<Context> children;
+    private String id;
+    private long time;
+    private List<Context> children;
 
     public Context() {
     }

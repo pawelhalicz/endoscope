@@ -1,13 +1,11 @@
 package org.endoscope.impl;
 
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.function.Consumer;
 
-public class Engine {
+public class ContextEngine {
     private ThreadLocal<LinkedList<Context>> contextStack = new ThreadLocal<>();
-    private Stats stats = new Stats();
     private Boolean enabled = null;
+    private StatsEngine statsEngine = new StatsEngine();
 
     public boolean isEnabled(){
         if( enabled == null ){
@@ -38,20 +36,14 @@ public class Engine {
     public void pop(){
         LinkedList<Context> stack = contextStack.get();
         Context context = stack.pop();
-        context.time = System.currentTimeMillis() - context.time;
+        context.setTime(System.currentTimeMillis() - context.getTime());
 
         if( stack.isEmpty() ){
-            synchronized(stats){
-                stats.store(context);
-            }
+            statsEngine.store(context);
         }
     }
 
-    //TODO this is ugly hack with access to internals  - for debug purposes only!!!
-    //TODO expose information that limit was reached
-    public void process(Consumer<Map<String, Stat>> consumer){
-        synchronized(stats){
-            stats.process(consumer);
-        }
+    public StatsEngine getStatsEngine() {
+        return statsEngine;
     }
 }

@@ -36,7 +36,7 @@ public class TheRestController {
     @Produces("application/json")
     public String top() {
         StringBuilder sb = new StringBuilder();
-        Endoscope.processStats(stats -> sb.append(toJsonStringTopLevel(stats)));
+        Endoscope.processStats(stats -> sb.append(toJsonStringTopLevel(stats.getMap())));
         return sb.toString();
     }
 
@@ -46,7 +46,7 @@ public class TheRestController {
     public String sub(@PathParam("id") String id){
         StringBuilder sb = new StringBuilder();
         Endoscope.processStats(stats -> {
-            Stat child = stats.get(id);
+            Stat child = stats.getMap().get(id);
             sb.append(toJsonString(child));
         });
         return sb.toString();

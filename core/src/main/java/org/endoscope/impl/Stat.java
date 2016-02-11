@@ -6,13 +6,13 @@ import java.util.Map;
 
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({ "hits", "max", "min", "avg", "ah10", "children" })
 public class Stat {
-    long hits = 0;
-    long max = -1;//not set
-    long min = 0;
-    double avg = 0;
-    long parentCount = 0;//when method is called N time for the same parent we add just 1 here
+    private long hits = 0;
+    private long max = -1;//not set
+    private long min = 0;
+    private double avg = 0;
+    private long parentCount = 0;//when method is called N time for the same parent we add just 1 here
     double avgParent = 0;
-    Map<String, Stat> children;
+    private Map<String, Stat> children;
 
     public Stat(){}
 

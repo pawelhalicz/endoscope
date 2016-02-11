@@ -1,16 +1,15 @@
 package org.endoscope;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
-import org.endoscope.impl.Stat;
-import org.endoscope.impl.Engine;
+import org.endoscope.impl.ContextEngine;
+import org.endoscope.impl.Stats;
 
 /**
  * Easy to use static facade.
  */
 public class Endoscope {
-    private static Engine ENGINE = new Engine();
+    private static ContextEngine ENGINE = new ContextEngine();
 
     public static boolean isEnabled(){
         return ENGINE.isEnabled();
@@ -24,8 +23,13 @@ public class Endoscope {
         ENGINE.pop();
     }
 
-    //TODO this is ugly hack with access to internals  - for debug purposes only!!!
-    public static void processStats(Consumer<Map<String, Stat>> consumer){
-        ENGINE.process(consumer);
+    /**
+     * This method blocks stats updating thread from storing new data.
+     * Please do your job as quickly as possible otherwise internal queue will reach limit and you'll loose some data.
+     * Do not expose objects outside - deep copy such object in order to keep it thread safe.
+     * @param consumer
+     */
+    public static void processStats(Consumer<Stats> consumer){
+        ENGINE.getStatsEngine().process(consumer);
     }
 }

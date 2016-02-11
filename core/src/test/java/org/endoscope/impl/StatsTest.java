@@ -13,6 +13,8 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.endoscope.impl.PropertyTestUtil.withProperty;
+
 public class StatsTest {
     final ObjectMapper om;
 
@@ -64,11 +66,10 @@ public class StatsTest {
         Stats stats = new Stats();
         stats.store(context);
 
-        final String[] result = new String[1];
-        stats.process(map -> result[0] = toJson(map) );
+        String result = toJson(stats.getMap());
 
         String expected = getResourceString(output);
-        Assert.assertEquals(expected, result[0]);
+        Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -94,30 +95,16 @@ public class StatsTest {
     @Test
     public void should_limit_number_of_stats(){
         //stats over limit will be ignored
-        withProperty("endoscope.max.stat.count", "2", ()->{
+        withProperty(Properties.MAX_STAT_COUNT, "2", ()->{
             process("/input4.json", "/expected4.json");
         });
-    }
-
-    private void withProperty(String name, String value, Runnable runnable) {
-        String previousValue = System.getProperty(name);
-        System.setProperty(name, value);
-        try{
-            runnable.run();
-        }finally{
-            if( previousValue == null ){
-                System.clearProperty(name);
-            } else {
-                System.setProperty(name, previousValue);
-            }
-        }
     }
 
     //estimate stats size
     @Ignore
     @Test
     public void estimate_stats_size(){
-        withProperty("endoscope.max.stat.count", "10000000", ()->{
+        withProperty(Properties.MAX_STAT_COUNT, "10000000", ()->{
             System.gc();
             long before = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1024*1024);
             System.out.println("Before: " + before + " MB");
@@ -129,9 +116,8 @@ public class StatsTest {
                 }
                 stats.store(new Context("" + i, 1L));
             }
-            stats.process( map -> {
-                Assert.assertEquals(map.size(), 1000001);//make sure we didn't hit the limit
-            });
+
+            Assert.assertEquals(stats.getMap().size(), 1000001);//make sure we didn't hit the limit
         });
     }
 
@@ -140,27 +126,51 @@ public class StatsTest {
     @Test
     public void estimate_json_stats_size(){
         ObjectMapper om = new ObjectMapper();
-        withProperty("endoscope.max.stat.count", "10000000", ()->{
+        withProperty(Properties.MAX_STAT_COUNT, "10000000", ()->{
             Stats stats = new Stats();
             for( long i=0; i<1000001; i++){
                 if( i % 100000 == 0 ){
                     final long ii = i;
-                    stats.process(map -> {
-                        try{
-                            File out = File.createTempFile("endoscope-tmp", ".json");
-                            om.writeValue(out, map);
-                            System.out.println( ii + " ~ " + (out.length()/(1024*1024)) + " MB");
-                            out.delete();
-                        }catch(IOException e){
-                            throw new RuntimeException(e);
-                        }
-                    });
+                    try{
+                        File out = File.createTempFile("endoscope-tmp", ".json");
+                        om.writeValue(out, stats.getMap());
+                        System.out.println( ii + " ~ " + (out.length()/(1024*1024)) + " MB");
+                        out.delete();
+                    }catch(IOException e){
+                        throw new RuntimeException(e);
+                    }
                 }
                 stats.store(new Context("" + i, 1L));
             }
-            stats.process( map -> {
-                Assert.assertEquals(map.size(), 1000001);//make sure we didn't hit the limit
-            });
+            Assert.assertEquals(1000001, stats.getMap().size());//make sure we didn't hit the limit
         });
+    }
+
+    @Test
+    public void should_increment_lost(){
+        Stats s = new Stats();
+        Assert.assertEquals(0, s.getLost());
+        s.incrementLost();
+        Assert.assertEquals(1, s.getLost());
+    }
+
+    @Test
+    public void should_set_error_message(){
+        Stats s = new Stats();
+        Assert.assertNull(s.getFatalError());
+        s.setFatalError("error");
+        Assert.assertEquals("error", s.getFatalError());
+    }
+
+    @Test
+    public void should_get_stats_left(){
+        Stats s = new Stats();
+        Assert.assertEquals(Properties.getMaxStatCount(), s.getStatsLeft());
+
+        Context parent = new Context("id", 13);
+        parent.addChild(new Context("id2", 133));
+        s.store(parent);
+        
+        Assert.assertEquals(Properties.getMaxStatCount() - 3, s.getStatsLeft());
     }
 }

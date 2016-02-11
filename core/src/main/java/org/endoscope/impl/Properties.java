@@ -1,6 +1,17 @@
 package org.endoscope.impl;
 
 public class Properties {
+    public static String MAX_STAT_COUNT = "endoscope.max.stat.count";
+    public static String QUEUE_MAX_SIZE = "endoscope.max.queue.size";
+    public static String EXCLUDED_PACKAGES = "endoscope.excluded-packages";
+    public static String SUPPORTED_NAMES = "endoscope.supported-names";
+    public static String ENABLED = "endoscope.enabled";
+    public static String SCANNED_PACKAGES = "endoscope.scanned-packages";
+
+    public static String DEFAULT_MAX_STAT_COUNT = "300000";
+    public static String DEFAULT_SUPPORTED_NAMES = ".*(Bean|Service|Controller|Ejb|EJB)";
+    public static String DEFAULT_QUEUE_MAX_SIZE = "1000000";
+
     private static String safeGetProperty(String name, String defaultValue){
         try{
             return System.getProperty(name, defaultValue);
@@ -10,19 +21,19 @@ public class Properties {
     }
 
     public static boolean isEnabled(){
-        return "true".equalsIgnoreCase(safeGetProperty("endoscope.enabled", "true"));
+        return "true".equalsIgnoreCase(safeGetProperty(ENABLED, "true"));
     }
 
     public static String[] getScannedPackages(){
-        return safeGetProperty("endoscope.scanned-packages", "").split(",");
+        return safeGetProperty(SCANNED_PACKAGES, "").split(",");
     }
 
     public static String[] getPackageExcludes(){
-        return safeGetProperty("endoscope.excluded-packages", "").split(",");
+        return safeGetProperty(EXCLUDED_PACKAGES, "").split(",");
     }
 
     public static String getSupportedNames(){
-        return safeGetProperty("endoscope.supported-names", ".*(Bean|Service|Controller|Ejb|EJB)");
+        return safeGetProperty(SUPPORTED_NAMES, DEFAULT_SUPPORTED_NAMES);
     }
 
     public static long getMaxStatCount(){
@@ -49,6 +60,10 @@ public class Properties {
 //        800000 ~ 52 MB
 //        900000 ~ 59 MB
 //        1000000 ~ 65 MB
-        return Long.valueOf(safeGetProperty("endoscope.max.stat.count", "300000"));//~42MB
+        return Long.valueOf(safeGetProperty(MAX_STAT_COUNT, DEFAULT_MAX_STAT_COUNT));//~42MB
+    }
+
+    public static int getMaxQueueSize(){
+        return Integer.valueOf(safeGetProperty(QUEUE_MAX_SIZE, DEFAULT_QUEUE_MAX_SIZE));
     }
 }
