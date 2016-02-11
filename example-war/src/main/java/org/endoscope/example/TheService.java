@@ -10,6 +10,7 @@ public class TheService {
     TheApplicationScoped service2;
 
     public String process(int level) {
+        SleepUtil.randomSleep();
         level--;
         for( int i=0; i<level; i++){
             service1.randomTimes(level);

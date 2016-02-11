@@ -27,8 +27,7 @@ public class Properties {
 
     public static long getMaxStatCount(){
 
-// RAM usage
-// Take a lok at: org.endoscope.impl.StatsTest.estimate_stats_size()
+// RAM usage (org.endoscope.impl.StatsTest.estimate_stats_size)
 //        100000 ~ 13 MB
 //        200000 ~ 28 MB
 //        300000 ~ 42 MB << default
@@ -39,7 +38,7 @@ public class Properties {
 //        800000 ~ 121 MB
 //        900000 ~ 135 MB
 //        1000000 ~ 150 MB
-//JSON size:
+//JSON size (org.endoscope.impl.StatsTest.estimate_json_stats_size):
 //        100000 ~ 6 MB
 //        200000 ~ 13 MB
 //        300000 ~ 19 MB << default (~1MB when compressed)

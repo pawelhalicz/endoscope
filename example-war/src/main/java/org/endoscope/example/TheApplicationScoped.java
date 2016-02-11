@@ -9,10 +9,12 @@ public class TheApplicationScoped {
     TheStateless service;
 
     public String process(int level) {
+        SleepUtil.randomSleep();
         level--;
         for( int i=0; i<level; i++){
             service.process(level);
         }
         return "OK";
     }
+
 }

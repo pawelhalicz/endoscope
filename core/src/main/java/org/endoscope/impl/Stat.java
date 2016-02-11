@@ -4,13 +4,14 @@ import java.beans.Transient;
 import java.util.HashMap;
 import java.util.Map;
 
+@com.fasterxml.jackson.annotation.JsonPropertyOrder({ "hits", "max", "min", "avg", "ah10", "children" })
 public class Stat {
     long hits = 0;
     long max = -1;//not set
     long min = 0;
-    long avg = 0;
+    double avg = 0;
     long parentCount = 0;//when method is called N time for the same parent we add just 1 here
-    long ah10 = 0; //average hit count in context of the same parent x10 (1 digit of precision)
+    double avgParent = 0;
     Map<String, Stat> children;
 
     public Stat(){}
@@ -40,7 +41,7 @@ public class Stat {
     }
 
     public long getAvg() {
-        return avg;
+        return Math.round(avg);
     }
 
     public void setAvg(long avg) {
@@ -48,16 +49,16 @@ public class Stat {
     }
 
     /**
-     * Average hits x10 (1 digit of precision)
+     * Average hits per parent x10 (1 digit of precision)
      * Short name for JSON - no @JsonProperty in this module
      * @return
      */
     public long getAh10() {
-        return ah10;
+        return Math.round(avgParent*10.0f);
     }
 
     public void setAh10(long ah10) {
-        this.ah10 = ah10;
+        avgParent = ((float)ah10)/10f;
     }
 
     public Map<String, Stat> getChildren() {
@@ -91,7 +92,7 @@ public class Stat {
     public void update(long time){
         if( time < 0 ) return;
         if( max < 0 ){
-            max = min = avg = time;
+            avg = max = min = time;
         } else {
             max = Math.max(max, time);
             min = Math.min(min, time);
@@ -101,8 +102,7 @@ public class Stat {
     }
 
     public void updateAvgHits(long hitsPerParent) {
-        //10x gives 1 digit of precision
-        ah10 = (ah10 * parentCount + 10 * hitsPerParent)/(parentCount+1);
+        avgParent = (avgParent * parentCount + hitsPerParent)/(parentCount+1);
         parentCount++;
     }
 }

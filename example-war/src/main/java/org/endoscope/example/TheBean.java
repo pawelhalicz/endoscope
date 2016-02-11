@@ -7,8 +7,9 @@ public class TheBean {
     TheStateless service;
 
     public String randomTimes(int level) {
+        SleepUtil.randomSleep();
         level--;
-        for(int i = 0; i< System.currentTimeMillis() % 100; i++){
+        for(int i = 0; i< System.currentTimeMillis() % 5; i++){
             service.process(level);
         }
         return "OK";
