@@ -5,10 +5,10 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ContextEngineTest {
+public class EngineTest {
     @Test
     public void test_flow(){
-        ContextEngine ci = new ContextEngine();
+        Engine ci = new Engine();
         ci.setEnabled(true);
 
         ci.push("a1");
@@ -18,7 +18,7 @@ public class ContextEngineTest {
 
         waitUtilStatsGetCollected(ci);
 
-        ci.getStatsEngine().process( stats -> {
+        ci.getStatsProcessor().process(stats -> {
             Map<String, Stat> map = stats.getMap();
             Assert.assertEquals(2, map.size());
             Assert.assertTrue(map.containsKey("a1"));
@@ -28,9 +28,9 @@ public class ContextEngineTest {
         });
     }
 
-    private void waitUtilStatsGetCollected(ContextEngine ci) {
+    private void waitUtilStatsGetCollected(Engine ci) {
         for(int i=0; i< 10; i++){
-            if( ci.getStatsEngine().getQueueSize() == 0 ){
+            if( ci.getStatsProcessor().getQueueSize() == 0 ){
                 break;
             }
             try {
@@ -44,14 +44,14 @@ public class ContextEngineTest {
     @Test
     public void should_return_enabled(){
         PropertyTestUtil.withProperty(Properties.ENABLED, "true", ()->{
-            Assert.assertTrue(new ContextEngine().isEnabled());
+            Assert.assertTrue(new Engine().isEnabled());
         });
     }
 
     @Test
     public void should_return_disabled(){
         PropertyTestUtil.withProperty(Properties.ENABLED, "false", ()->{
-            Assert.assertFalse(new ContextEngine().isEnabled());
+            Assert.assertFalse(new Engine().isEnabled());
         });
     }
 }

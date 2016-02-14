@@ -10,13 +10,13 @@ import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class StatsEngine {
-    private static final Logger log = getLogger(StatsEngine.class);
+public class StatsProcessor {
+    private static final Logger log = getLogger(StatsProcessor.class);
 
     private Stats stats;
     private LinkedBlockingDeque<Context> queue;
 
-    public StatsEngine() {
+    public StatsProcessor() {
         Backup backup = new Backup();
         stats = backup.safeLoadBackup();
         if( stats == null ){

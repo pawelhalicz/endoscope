@@ -2,10 +2,10 @@ package org.endoscope.impl;
 
 import java.util.LinkedList;
 
-public class ContextEngine {
+public class Engine {
     private ThreadLocal<LinkedList<Context>> contextStack = new ThreadLocal<>();
     private Boolean enabled = null;
-    private StatsEngine statsEngine = new StatsEngine();
+    private StatsProcessor statsProcessor = new StatsProcessor();
 
     public boolean isEnabled(){
         if( enabled == null ){
@@ -39,11 +39,11 @@ public class ContextEngine {
         context.setTime(System.currentTimeMillis() - context.getTime());
 
         if( stack.isEmpty() ){
-            statsEngine.store(context);
+            statsProcessor.store(context);
         }
     }
 
-    public StatsEngine getStatsEngine() {
-        return statsEngine;
+    public StatsProcessor getStatsProcessor() {
+        return statsProcessor;
     }
 }
