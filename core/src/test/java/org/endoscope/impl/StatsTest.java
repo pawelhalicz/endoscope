@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.IOUtils;
+import org.endoscope.storage.JsonUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,34 +13,12 @@ import org.junit.Test;
 import static org.endoscope.impl.PropertyTestUtil.withProperty;
 
 public class StatsTest {
-    final ObjectMapper om;
-
-    public StatsTest(){
-        om = new ObjectMapper();
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        om.enable(SerializationFeature.INDENT_OUTPUT);
-    }
-
-    private String toJson(Object o){
-        try {
-            return om.writeValueAsString(o);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private <T> T fromJson(InputStream src, Class<T> clazz){
-        try {
-            return om.readValue(src, clazz);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    final JsonUtil jsonUtil = new JsonUtil(true);
 
     private <T> T fromResourceJson(String resourceName, Class<T> clazz){
         InputStream src = this.getClass().getResourceAsStream(resourceName);
         try{
-            return fromJson(src, clazz);
+            return jsonUtil.fromJson(clazz, src);
         }finally{
             IOUtils.closeQuietly(src);
         }
@@ -66,7 +41,7 @@ public class StatsTest {
         Stats stats = new Stats();
         stats.store(context);
 
-        String result = toJson(stats.getMap());
+        String result = jsonUtil.toJson(stats.getMap());
 
         String expected = getResourceString(output);
         Assert.assertEquals(expected, result);
@@ -125,7 +100,6 @@ public class StatsTest {
     @Ignore
     @Test
     public void estimate_json_stats_size(){
-        ObjectMapper om = new ObjectMapper();
         withProperty(Properties.MAX_STAT_COUNT, "10000000", ()->{
             Stats stats = new Stats();
             for( long i=0; i<1000001; i++){
@@ -133,7 +107,7 @@ public class StatsTest {
                     final long ii = i;
                     try{
                         File out = File.createTempFile("endoscope-tmp", ".json");
-                        om.writeValue(out, stats.getMap());
+                        jsonUtil.toJson(stats.getMap(), out);
                         System.out.println( ii + " ~ " + (out.length()/(1024*1024)) + " MB");
                         out.delete();
                     }catch(IOException e){

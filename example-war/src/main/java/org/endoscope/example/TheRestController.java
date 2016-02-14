@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.endoscope.Endoscope;
 import org.endoscope.impl.Stat;
+import org.endoscope.storage.JsonUtil;
 
 import static java.util.Collections.EMPTY_MAP;
 
@@ -19,6 +20,9 @@ import static java.util.Collections.EMPTY_MAP;
 public class TheRestController {
     @Inject
     TheService theService;
+
+    @Inject
+    JsonUtil jsonUtil;
 
     @GET
     @Path("/process")
@@ -47,7 +51,7 @@ public class TheRestController {
         StringBuilder sb = new StringBuilder();
         Endoscope.processStats(stats -> {
             Stat child = stats.getMap().get(id);
-            sb.append(toJsonString(child));
+            sb.append(jsonUtil.toJson(child));
         });
         return sb.toString();
     }
@@ -65,14 +69,6 @@ public class TheRestController {
     @Produces("application/javascript")
     public Response uiResource() {
         return Response.ok(getClass().getResourceAsStream("/jquery.min.js")).build();
-    }
-
-    private String toJsonString(Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static String toJsonStringTopLevel(Map<String, Stat> map) {

@@ -105,4 +105,37 @@ public class Stat {
         avgParent = (avgParent * parentCount + hitsPerParent)/(parentCount+1);
         parentCount++;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Stat)) return false;
+
+        Stat stat = (Stat) o;
+
+        if (hits != stat.hits) return false;
+        if (max != stat.max) return false;
+        if (min != stat.min) return false;
+        if (Double.compare(stat.avg, avg) != 0) return false;
+        if (parentCount != stat.parentCount) return false;
+        if (Double.compare(stat.avgParent, avgParent) != 0) return false;
+        return children != null ? children.equals(stat.children) : stat.children == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = (int) (hits ^ (hits >>> 32));
+        result = 31 * result + (int) (max ^ (max >>> 32));
+        result = 31 * result + (int) (min ^ (min >>> 32));
+        temp = Double.doubleToLongBits(avg);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (int) (parentCount ^ (parentCount >>> 32));
+        temp = Double.doubleToLongBits(avgParent);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (children != null ? children.hashCode() : 0);
+        return result;
+    }
 }
