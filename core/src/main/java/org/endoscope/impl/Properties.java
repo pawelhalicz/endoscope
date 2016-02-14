@@ -79,6 +79,6 @@ public class Properties {
     }
 
     public static String getStorageDir(){
-        return safeGetProperty(STORAGE_DIR, "");
+        return safeGetProperty(STORAGE_DIR, null);
     }
 }

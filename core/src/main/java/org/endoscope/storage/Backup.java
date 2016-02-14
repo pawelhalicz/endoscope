@@ -14,13 +14,17 @@ public class Backup {
     private static final Logger log = getLogger(Backup.class);
 
     private int backupFreqMinutes = Properties.getBackupFreqMinutes();
-    private DiskStorage diskStorage;
+    private DiskStorage diskStorage = null;
     private DateUtil dateUtil;
     private Date lastBackup;
 
     public Backup(){
-        this.diskStorage = new DiskStorage(new File(Properties.getStorageDir()));
-        this.dateUtil = new DateUtil();
+        try{
+            String dir = Properties.getStorageDir();
+            diskStorage = dir == null ? null : new DiskStorage(new File(dir));
+        }catch(Exception e){
+        }
+        dateUtil = new DateUtil();
         lastBackup = dateUtil.now();
     }
 
@@ -31,7 +35,7 @@ public class Backup {
     }
 
     public boolean shouldBackup(){
-        if( backupFreqMinutes > 0 ){
+        if( diskStorage != null && backupFreqMinutes > 0 ){
             Date now = dateUtil.now();
             long offset = now.getTime() - lastBackup.getTime();
             long minutes = TimeUnit.MILLISECONDS.toMinutes(offset);
@@ -42,8 +46,10 @@ public class Backup {
 
     public void safeBackup(Stats stats){
         try{
-            diskStorage.saveBackup(stats);
-            lastBackup = dateUtil.now();
+            if( diskStorage != null ){
+                diskStorage.saveBackup(stats);
+                lastBackup = dateUtil.now();
+            }
         }catch(Exception e){
             log.error("failed to backup stats", e);
         }
@@ -54,6 +60,9 @@ public class Backup {
     }
 
     public Stats safeLoadBackup(){
+        if( diskStorage == null ){
+            return null;
+        }
         try{
             return diskStorage.loadBackup();
         }catch(Exception e){
