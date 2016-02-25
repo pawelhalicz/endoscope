@@ -147,4 +147,12 @@ public class StatsTest {
         
         Assert.assertEquals(Properties.getMaxStatCount() - 3, s.getStatsLeft());
     }
+
+    @Test
+    public void should_deep_copy(){
+        Stats s1 = StatTestUtil.buildRandomStats(3);
+        Stats s2 = s1.deepCopy();
+
+        Assert.assertEquals(s1, s2);
+    }
 }

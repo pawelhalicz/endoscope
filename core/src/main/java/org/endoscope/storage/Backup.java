@@ -1,6 +1,5 @@
 package org.endoscope.storage;
 
-import java.io.File;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -18,14 +17,8 @@ public class Backup {
     private DateUtil dateUtil;
     private Date lastBackup;
 
-    public Backup(){
-        try{
-            String dir = Properties.getStorageDir();
-            diskStorage = dir == null ? null : new DiskStorage(new File(dir));
-        }catch(Exception e){
-        }
-        dateUtil = new DateUtil();
-        lastBackup = dateUtil.now();
+    public Backup(DiskStorage diskStorage){
+        this(diskStorage, new DateUtil());
     }
 
     public Backup(DiskStorage diskStorage, DateUtil dateUtil){
@@ -47,7 +40,7 @@ public class Backup {
     public void safeBackup(Stats stats){
         try{
             if( diskStorage != null ){
-                diskStorage.saveBackup(stats);
+                diskStorage.save(stats);
                 lastBackup = dateUtil.now();
             }
         }catch(Exception e){
@@ -57,17 +50,5 @@ public class Backup {
 
     public Date getLastBackupTime() {
         return lastBackup;
-    }
-
-    public Stats safeLoadBackup(){
-        if( diskStorage == null ){
-            return null;
-        }
-        try{
-            return diskStorage.loadBackup();
-        }catch(Exception e){
-            log.error("failed to backup stats", e);
-        }
-        return null;
     }
 }

@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static java.util.stream.IntStream.range;
+import static org.endoscope.impl.StatTestUtil.buildRandomStat;
 
 public class StatTest {
 
@@ -136,28 +137,6 @@ public class StatTest {
 
             Assert.assertEquals(s1, s2);
         });
-    }
-
-    private Stat buildRandomStat(int maxChildren){
-        Random r = new Random();
-        Stat s = new Stat();
-        s.setHits(Math.abs(r.nextLong()) % 1000000);
-        s.setMax(Math.abs(r.nextLong()));
-        s.setMin(Math.abs(r.nextLong()));
-        s.setAvg(Math.abs(r.nextLong()));
-        s.setParentCount(Math.abs(r.nextLong()) % 1000000);
-        s.setAvgParent(Math.abs((r.nextDouble())));
-
-        if( maxChildren > 0){
-            int numChildren = r.nextInt(maxChildren);
-            if( numChildren > 0 ){
-                s.ensureChildrenMap();
-                range(0,numChildren)
-                        .forEach(i -> s.getChildren().put("c" + i, buildRandomStat(maxChildren-1)));
-            }
-        }
-
-        return s;
     }
 
     @Test
@@ -289,5 +268,13 @@ public class StatTest {
 
         Assert.assertEquals(1, s1.getChildren().size());
         Assert.assertEquals(mergedChild, s1.getChildren().get("child"));
+    }
+
+    @Test
+    public void should_deep_copy(){
+        Stat s1 = buildRandomStat(2);
+        Stat s2 = s1.deepCopy();
+
+        Assert.assertEquals(s1, s2);
     }
 }

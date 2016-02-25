@@ -1,11 +1,27 @@
 package org.endoscope.impl;
 
+import java.io.File;
 import java.util.LinkedList;
+
+import org.endoscope.storage.Backup;
+import org.endoscope.storage.DiskStorage;
 
 public class Engine {
     private ThreadLocal<LinkedList<Context>> contextStack = new ThreadLocal<>();
     private Boolean enabled = null;
-    private StatsProcessor statsProcessor = new StatsProcessor();
+    private DiskStorage diskStorage = null;//may stay null if disabled or folder is invalid/inaccessible
+    private Backup backup;
+    private StatsProcessor statsProcessor;
+
+    public Engine(){
+        try{
+            String dir = Properties.getStorageDir();
+            diskStorage = dir == null ? null : new DiskStorage(new File(dir));
+        }catch(Exception e){
+        }
+        backup = new Backup(diskStorage);
+        statsProcessor = new StatsProcessor(backup);
+    }
 
     public boolean isEnabled(){
         if( enabled == null ){
@@ -46,4 +62,6 @@ public class Engine {
     public StatsProcessor getStatsProcessor() {
         return statsProcessor;
     }
+
+    public DiskStorage getDiskStorage(){ return diskStorage; }
 }

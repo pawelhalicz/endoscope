@@ -2,9 +2,7 @@ package org.endoscope.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.util.concurrent.LinkedBlockingDeque;
 
-import org.endoscope.storage.Backup;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -12,14 +10,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class StatsCollector implements Runnable {
     private static final Logger log = getLogger(StatsCollector.class);
 
-    private Backup backup;
-    private Stats stats;
-    private LinkedBlockingDeque<Context> queue;
+    private StatsProcessor sp;
 
-    public StatsCollector(Stats stats, LinkedBlockingDeque<Context> queue, Backup backup){
-        this.stats = stats;
-        this.queue = queue;
-        this.backup = backup;
+    public StatsCollector(StatsProcessor statsProcessor){
+        this.sp = statsProcessor;
     }
 
     @Override
@@ -27,19 +21,12 @@ public class StatsCollector implements Runnable {
         log.info("started stats collector thread");
         try{
             while(!Thread.interrupted()){
-                Context ctx = queue.poll();
-                while(ctx != null){
-                    synchronized(stats){
-                        stats.store(ctx);
-                    }
-                    ctx = queue.pollFirst();
-                }
-                safeBackupIfNeeded();
+                sp.processAllFromQueue();
                 safeSleep();
             }
         }catch(Exception e){
             log.info("stats collector thread interrupted - won't collect any more stats");
-            stats.setFatalError(getStacktrace(e));//assignment is thread safe
+            sp.setFatalError(getStacktrace(e));
         }
         log.info("stopped stats collector thread");
     }
@@ -48,14 +35,6 @@ public class StatsCollector implements Runnable {
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
-        }
-    }
-
-    private void safeBackupIfNeeded(){
-        if( backup.shouldBackup() ){
-            synchronized(stats){
-                backup.safeBackup(stats);
-            }
         }
     }
 

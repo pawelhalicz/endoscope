@@ -172,6 +172,13 @@ public class Stat {
         });
     }
 
+    public Stat deepCopy(){
+        Stat s = new Stat();
+        s.merge(this);
+        s.setMin(min);
+        return s;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

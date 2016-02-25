@@ -19,12 +19,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-/**
- * Date: 14/02/16
- * Time: 21:26
- *
- * @author p.halicz
- */
 @RunWith(MockitoJUnitRunner.class)
 public class BackupTest {
     @Mock
@@ -73,7 +67,7 @@ public class BackupTest {
         Stats stats = new Stats();
         backup.safeBackup(stats);
 
-        verify(diskStorage).saveBackup(same(stats));
+        verify(diskStorage).save(same(stats));
         verifyNoMoreInteractions(diskStorage);
         verify(dateUtil, times(2)).now();
         verifyNoMoreInteractions(dateUtil);

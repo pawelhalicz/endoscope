@@ -13,17 +13,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.endoscope.storage.DiskStorage.BACKUP_FILE_NAME;
 import static org.endoscope.storage.DiskStorage.PART_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Date: 14/02/16
- * Time: 18:06
- *
- * @author p.halicz
- */
 public class DiskStorageTest {
     static File dir;
     static DiskStorage ds;
@@ -57,20 +50,8 @@ public class DiskStorageTest {
     }
 
     @Test
-    public void should_save_and_load_backup_file()throws IOException{
-        File f = ds.saveBackup(stats);
-
-        assertEquals( dir.getAbsolutePath() + File.separator + BACKUP_FILE_NAME, f.getAbsolutePath() );
-
-        Stats loaded = ds.load(f.getName());
-
-        assertEquals(stats, loaded);
-        assertEquals(jsonUtil.toJson(stats), jsonUtil.toJson(loaded));
-    }
-
-    @Test
     public void should_save_and_load_part_file() throws IOException{
-        File f = ds.savePart(stats);
+        File f = ds.save(stats);
 
         assertEquals( dir.getAbsolutePath() + File.separator + PART_PREFIX + "2001-09-09-01-46-40_2011-03-13-07-06-40.gz", f.getAbsolutePath() );
 
@@ -82,9 +63,8 @@ public class DiskStorageTest {
 
     @Test
     public void should_list_only_parts() throws IOException{
-        ds.saveBackup(buildCommonStats());
-        File part1 = ds.savePart(shiftDates(buildCommonStats(), 1000000L));
-        File part2 = ds.savePart(shiftDates(buildCommonStats(), 2000000L));
+        File part1 = ds.save(shiftDates(buildCommonStats(), 1000000L));
+        File part2 = ds.save(shiftDates(buildCommonStats(), 2000000L));
 
         System.out.println(part1.getName());
         System.out.println(part2.getName());
@@ -93,7 +73,6 @@ public class DiskStorageTest {
         System.out.println(parts);
 
         assertTrue(parts.size() >= 2 );//may be more du to different tests
-        assertTrue(!parts.contains(BACKUP_FILE_NAME));
         assertTrue(parts.contains(part1.getName()));
         assertTrue(parts.contains(part2.getName()));
     }

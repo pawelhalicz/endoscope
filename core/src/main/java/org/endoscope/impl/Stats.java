@@ -75,6 +75,21 @@ public class Stats {
     }
 
     @Transient
+    public Stats deepCopy(){
+        Stats s = new Stats();
+
+        s.statsLeft = statsLeft;
+        s.lost = lost;
+        s.fatalError = fatalError;
+        s.startDate = startDate;
+        s.endDate = endDate;
+
+        map.forEach((k, v) -> s.map.put(k, v.deepCopy()));
+
+        return s;
+    }
+
+    @Transient
     public void incrementLost() {
         lost++;
     }

@@ -19,7 +19,6 @@ import org.endoscope.impl.Stats;
 
 public class DiskStorage {
     public static final String PART_PREFIX = "part_";
-    public static final String BACKUP_FILE_NAME = "backup.gz";
     private File dir;
     private JsonUtil jsonUtil = new JsonUtil();
 
@@ -33,27 +32,16 @@ public class DiskStorage {
         }
     }
 
-    public File savePart(Stats stats) throws IOException {
+    public File save(Stats stats) throws IOException {
         ensureDates(stats);
         String fileName = buildPartName(stats.getStartDate(), stats.getEndDate());
         return writeToGzipFile(stats, fileName);
     }
 
-    public File saveBackup(Stats stats) throws IOException{
-        ensureDates(stats);
-        return writeToGzipFile(stats, BACKUP_FILE_NAME);
-    }
-
-    public Stats loadBackup() throws IOException{
-        return load(BACKUP_FILE_NAME);
-    }
-
     public List<String> listParts(){
-        String[] arr = dir.list((File dir, String name) -> {
-            return name.startsWith(PART_PREFIX);
-        });
+        String[] arr = dir.list((dir, name) -> name.startsWith(PART_PREFIX));
         return Arrays.asList(arr);
-}
+    }
 
     public Stats load(String name) throws IOException {
         return readFromGzipFile(name);

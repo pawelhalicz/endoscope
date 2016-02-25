@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import org.endoscope.impl.Engine;
 import org.endoscope.impl.Stats;
+import org.endoscope.storage.DiskStorage;
 
 /**
  * Easy to use static facade.
@@ -32,4 +33,16 @@ public class Endoscope {
     public static void processStats(Consumer<Stats> consumer){
         ENGINE.getStatsProcessor().process(consumer);
     }
+
+    /**
+     * Returns deep copy (thread safe) of whole stats. It might be time consuming do make such copy in case of huge stats.
+     * @return
+     */
+    public static Stats getCurrentStats(){
+        Stats[] result = new Stats[]{null};
+        processStats(stats -> result[0] = stats.deepCopy());
+        return result[0];
+    }
+
+    public static DiskStorage getDiskStorage(){ return ENGINE.getDiskStorage(); }
 }
