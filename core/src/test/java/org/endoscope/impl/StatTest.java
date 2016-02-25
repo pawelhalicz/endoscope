@@ -3,10 +3,11 @@ package org.endoscope.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import static java.util.stream.IntStream.range;
 
 public class StatTest {
 
@@ -32,7 +33,6 @@ public class StatTest {
         s.setChildren(m);
         Assert.assertSame(m, s.getChildren());
     }
-
 
     @Test
     public void should_set_not_empty_children_if_null(){
@@ -92,7 +92,7 @@ public class StatTest {
         Stat s = new Stat();
         Random random = new Random();
 
-        IntStream.range(0, 100000000).forEach( i -> {
+        range(0, 100000000).forEach( i -> {
             long r = random.nextInt(1000);
             s.update(r);
             s.updateAvgHits(r);
@@ -112,5 +112,182 @@ public class StatTest {
         Assert.assertEquals(100000000, s.getHits());
         Assert.assertTrue(s.getAh10() < 5050 && s.getAh10() > 4450 );
         Assert.assertTrue(s.avgParent < 505 && s.avgParent > 445);
+    }
+
+    @Test
+    public void should_merge_empty_stats(){
+        Stat s1 = new Stat();
+        Stat s2 = new Stat();
+
+        Assert.assertEquals(s1, s2);
+
+        s1.merge(s2);
+        Assert.assertEquals(s1, s2);
+    }
+
+    @Test
+    public void should_merge_add_to_empty(){
+        range(0,10).forEach( i -> {
+            Stat s1 = new Stat();
+            Stat s2 = buildRandomStat(3);
+            s2.setMin(0);
+
+            s1.merge(s2);
+
+            Assert.assertEquals(s1, s2);
+        });
+    }
+
+    private Stat buildRandomStat(int maxChildren){
+        Random r = new Random();
+        Stat s = new Stat();
+        s.setHits(Math.abs(r.nextLong()) % 1000000);
+        s.setMax(Math.abs(r.nextLong()));
+        s.setMin(Math.abs(r.nextLong()));
+        s.setAvg(Math.abs(r.nextLong()));
+        s.setParentCount(Math.abs(r.nextLong()) % 1000000);
+        s.setAvgParent(Math.abs((r.nextDouble())));
+
+        if( maxChildren > 0){
+            int numChildren = r.nextInt(maxChildren);
+            if( numChildren > 0 ){
+                s.ensureChildrenMap();
+                range(0,numChildren)
+                        .forEach(i -> s.getChildren().put("c" + i, buildRandomStat(maxChildren-1)));
+            }
+        }
+
+        return s;
+    }
+
+    @Test
+    public void should_merge_hits(){
+        Stat s1 = new Stat(); s1.setHits(10);
+        Stat s2 = new Stat(); s2.setHits(13);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(23, s1.getHits());
+        Assert.assertEquals(13, s2.getHits());
+    }
+
+    @Test
+    public void should_merge_parent_count(){
+        Stat s1 = new Stat(); s1.setParentCount(10);
+        Stat s2 = new Stat(); s2.setParentCount(13);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(23, s1.getParentCount());
+        Assert.assertEquals(13, s2.getParentCount());
+    }
+
+    @Test
+    public void should_merge_max(){
+        Stat s1 = new Stat(); s1.setMax(10);
+        Stat s2 = new Stat(); s2.setMax(13);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(13, s1.getMax());
+
+        Stat s3 = new Stat(); s3.setMax(13);
+        Stat s4 = new Stat(); s4.setMax(10);
+
+        s3.merge(s4);
+
+        Assert.assertEquals(13, s3.getMax());
+    }
+
+    @Test
+    public void should_merge_min(){
+        Stat s1 = new Stat(); s1.setMin(10);
+        Stat s2 = new Stat(); s2.setMin(13);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(10, s1.getMin());
+
+        Stat s3 = new Stat(); s3.setMin(13);
+        Stat s4 = new Stat(); s4.setMin(10);
+
+        s3.merge(s4);
+
+        Assert.assertEquals(10, s3.getMin());
+    }
+
+    @Test
+    public void should_merge_avg(){
+        Stat s1 = new Stat(); s1.setHits(2); s1.setAvg(10);
+        Stat s2 = new Stat(); s2.setHits(2); s2.setAvg(30);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(20, s1.getAvg());
+    }
+
+    @Test
+    public void should_merge_avg_parent(){
+        Stat s1 = new Stat(); s1.setParentCount(2); s1.setAvgParent(10.0);
+        Stat s2 = new Stat(); s2.setParentCount(2); s2.setAvgParent(30.0);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(0, Stat.compareDoubleLowPrecision(20.0, s1.getAvgParent()));
+    }
+
+    @Test
+    public void should_add_child(){
+        Stat s1 = new Stat();
+        Stat s2 = new Stat();
+        Stat child = buildRandomStat(2);
+        s2.ensureChildrenMap();
+        s2.getChildren().put("child",child);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(s1.getChildren(), s2.getChildren());
+        Assert.assertEquals(1, s1.getChildren().size());
+        Assert.assertEquals(child, s1.getChildren().get("child"));
+    }
+
+    @Test
+    public void should_keep_child(){
+        Stat s1 = new Stat();
+        s1.ensureChildrenMap();
+        Stat child = buildRandomStat(2);
+        s1.getChildren().put("child",child);
+
+        Stat s2 = new Stat();
+
+        s1.merge(s2);
+
+        Assert.assertNull(s2.getChildren());
+        Assert.assertEquals(1, s1.getChildren().size());
+        Assert.assertEquals(child, s1.getChildren().get("child"));
+    }
+
+    @Test
+    public void should_merge_child(){
+        Stat child1 = buildRandomStat(2);
+        Stat child2 = buildRandomStat(2);
+
+        Stat s1 = new Stat();
+        s1.ensureChildrenMap();
+        s1.getChildren().put("child",child1);
+
+        Stat s2 = new Stat();
+        s2.ensureChildrenMap();
+        s2.getChildren().put("child",child2);
+
+        Stat mergedChild = new Stat();
+        mergedChild.setMin(child1.getMin());
+        mergedChild.merge(child1);
+        mergedChild.merge(child2);
+
+        s1.merge(s2);
+
+        Assert.assertEquals(1, s1.getChildren().size());
+        Assert.assertEquals(mergedChild, s1.getChildren().get("child"));
     }
 }

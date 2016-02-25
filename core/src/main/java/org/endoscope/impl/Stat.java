@@ -7,11 +7,25 @@ import java.util.Map;
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({ "hits", "max", "min", "avg", "ah10", "children" })
 public class Stat {
     private long hits = 0;
-    private long max = -1;//not set
+    private long max = -1;//-1 means it's not set
     private long min = 0;
     private double avg = 0;
-    private long parentCount = 0;//when method is called N time for the same parent we add just 1 here
+
+    /*
+        Average hits per parent. For example:
+        1) parentMethod calls childMethod 2 times
+        2) parentMethod calls childMethod 4 times
+
+        In such case we should get:
+            parentCount==2
+            avgParent==3.0
+
+        Notice that we increment parentCount by one - thats the difference from hits
+        and allows us to calulate average number of hits
+     */
+    private long parentCount = 0;
     double avgParent = 0;
+
     private Map<String, Stat> children;
 
     public Stat(){}
@@ -69,6 +83,26 @@ public class Stat {
         this.children = children;
     }
 
+    @Transient
+    public long getParentCount() {
+        return parentCount;
+    }
+
+    @Transient
+    public void setParentCount(long parentCount) {
+        this.parentCount = parentCount;
+    }
+
+    @Transient
+    public double getAvgParent() {
+        return avgParent;
+    }
+
+    @Transient
+    public void setAvgParent(double avgParent) {
+        this.avgParent = avgParent;
+    }
+
     public void ensureChildrenMap(){
         if(children == null){
             children = new HashMap<>();
@@ -106,6 +140,38 @@ public class Stat {
         parentCount++;
     }
 
+    public void merge(Stat inc){
+        max = Math.max(max, inc.max);
+        min = Math.min(min, inc.min);
+        if( hits + inc.hits > 0 ){
+            avg = (avg*hits + inc.avg*inc.hits)/(hits + inc.hits);
+            hits += inc.hits;
+        }
+
+        if( parentCount + inc.parentCount > 0 ){
+            avgParent = (avgParent * parentCount + inc.avgParent * inc.parentCount)/(parentCount + inc.parentCount);
+            parentCount += inc.parentCount;
+        }
+
+        mergeChildren(inc);
+    }
+
+    private void mergeChildren(Stat s2){
+        if( s2.getChildren() == null ){
+            return;
+        }
+        ensureChildrenMap();
+
+        s2.children.forEach((k2, v2) -> {
+            Stat v1 = children.get(k2);
+            if( v1 == null ){
+                children.put(k2, v2);
+            } else {
+                v1.merge(v2);
+            }
+        });
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,11 +182,16 @@ public class Stat {
         if (hits != stat.hits) return false;
         if (max != stat.max) return false;
         if (min != stat.min) return false;
-        if (Double.compare(stat.avg, avg) != 0) return false;
+        if ( compareDoubleLowPrecision(stat.avg, avg) != 0) return false;
         if (parentCount != stat.parentCount) return false;
-        if (Double.compare(stat.avgParent, avgParent) != 0) return false;
+        if ( compareDoubleLowPrecision(stat.avgParent, avgParent) != 0) return false;
         return children != null ? children.equals(stat.children) : stat.children == null;
+    }
 
+    public static int compareDoubleLowPrecision(double d1, double d2){
+        long l1 = Math.round(d1 * 1000);
+        long l2 = Math.round(d2 * 1000);
+        return Long.compare(l1, l2);
     }
 
     @Override
@@ -137,5 +208,18 @@ public class Stat {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (children != null ? children.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Stat{" +
+                "hits=" + hits +
+                ", max=" + max +
+                ", min=" + min +
+                ", avg=" + avg +
+                ", parentCount=" + parentCount +
+                ", avgParent=" + avgParent +
+                ", children=" + children +
+                '}';
     }
 }
