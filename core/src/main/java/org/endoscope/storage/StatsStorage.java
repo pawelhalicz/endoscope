@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import org.endoscope.impl.Stats;
 
+/**
+ * Implementation class should have public constructor that accepts single String parameter.
+ */
 public interface StatsStorage {
     /**
      * Save stats.

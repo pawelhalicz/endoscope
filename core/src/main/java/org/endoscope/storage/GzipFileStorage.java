@@ -24,13 +24,18 @@ import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Simple gzip file store. Dumps whole stats to JSON.
+ *
+ * Search capabilities are for test/demo purposes rather than for practical use on larger stats.
+ */
 public class GzipFileStorage implements StatsStorage {
     private static final Logger log = getLogger(GzipFileStorage.class);
 
     public static final String PREFIX = "stats";
     public static final String SEPARATOR = "_";
     public static final String EXTENSION = "gz";
-    public static final Pattern NAME_PATTERN = Pattern.compile(PREFIX + SEPARATOR + "....-..-..-..-..-.." + SEPARATOR + "....-..-..-..-..-.." + "\\." + EXTENSION);
+    public static final Pattern NAME_PATTERN = Pattern.compile("stats_....-..-..-..-..-.._....-..-..-..-..-..\\.gz");
     public static final String DATE_PATTERN = "yyyy-MM-dd-HH-mm-ss";
     public static final String DATE_TIMEZONE = "GMT";
     private File dir;
@@ -52,7 +57,7 @@ public class GzipFileStorage implements StatsStorage {
 
     @Override
     public String save(Stats stats) throws IOException {
-        ensureDates(stats);
+        ensureDatesAreSet(stats);
         String fileName = buildPartName(stats.getStartDate(), stats.getEndDate());
         return writeToGzipFile(stats, fileName).getName();
     }
@@ -144,7 +149,7 @@ public class GzipFileStorage implements StatsStorage {
         }
     }
 
-    private void ensureDates(Stats stats) {
+    private void ensureDatesAreSet(Stats stats) {
         if( stats.getStartDate() == null ){
             stats.setStartDate(new Date());
         }

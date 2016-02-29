@@ -1,18 +1,8 @@
-/*
- * Copyright (c) 2016 SmartRecruiters Inc. All Rights Reserved.
- */
-
 package org.endoscope.storage;
 
 import java.beans.Transient;
 import java.util.Date;
 
-/**
- * Date: 29/02/16
- * Time: 16:29
- *
- * @author p.halicz
- */
 public class StatsInfo {
     private String name;
     private Date fromDate;
@@ -65,12 +55,9 @@ public class StatsInfo {
 
     @Transient
     public boolean inRange(Date from, Date to){
-        //parts match when they are in given range
-        return  from != null
-                && to != null
-                && getFromDate() != null
-                && getToDate() != null
-                && (from.before(getFromDate()) || from.equals(getFromDate()))
-                && (to.after(getFromDate()) || to.equals(getFromDate()));
+        return  from != null && to != null
+                && getFromDate() != null && getToDate() != null
+                && from.getTime() <= getFromDate().getTime()
+                && to.getTime() >= getFromDate().getTime();
     }
 }
