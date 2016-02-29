@@ -24,8 +24,8 @@
             <artifactId>cdi-ee7</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.endoscope</groupId>
+            <artifactId>cdi-simple-ui</artifactId>
         </dependency>
     </dependencies>
 

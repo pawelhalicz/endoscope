@@ -15,7 +15,6 @@ public class Properties {
     public static String DEFAULT_SUPPORTED_NAMES = ".*(Bean|Service|Controller|Ejb|EJB)";
     public static String DEFAULT_QUEUE_MAX_SIZE = "1000000";
     public static String DEFAULT_BACKUP_FREQ_MINUTES = "5";
-    public static String DEFAULT_STATS_STORAGE_CLASS = org.endoscope.storage.GzipFileStorage.class.getName();
 
     private static String safeGetProperty(String name, String defaultValue){
         try{
@@ -85,6 +84,6 @@ public class Properties {
     }
 
     public static String getStatsStorageClass(){
-        return safeGetProperty(STATS_STORAGE_CLASS, DEFAULT_STATS_STORAGE_CLASS);
+        return safeGetProperty(STATS_STORAGE_CLASS, null);
     }
 }

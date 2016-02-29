@@ -1,26 +1,17 @@
 package org.endoscope.storage;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.commons.io.IOUtils;
+import org.endoscope.impl.Stats;
+import org.slf4j.Logger;
+
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import org.apache.commons.io.IOUtils;
-import org.endoscope.impl.Stats;
-import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -42,7 +33,14 @@ public class GzipFileStorage implements StatsStorage {
     private JsonUtil jsonUtil = new JsonUtil();
 
     public GzipFileStorage(String dir){
-        this(new File(dir));
+        this(toFile(dir));
+    }
+
+    private static File toFile(String dir){
+        if(dir == null || dir.trim().length() <1){
+            throw new IllegalArgumentException("Storage directory cannot be blank");
+        }
+        return new File(dir);
     }
 
     public GzipFileStorage(File dir){

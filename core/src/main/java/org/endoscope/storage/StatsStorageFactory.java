@@ -22,13 +22,15 @@ public class StatsStorageFactory {
         String className = Properties.getStatsStorageClass();
         String classInitParam = Properties.getStatsStorageClassInitParam();
 
-        try {
-            Class<? extends StatsStorage> clazz = (Class<? extends StatsStorage>)Class.forName(className);
-            StatsStorage storage = clazz.getConstructor(String.class).newInstance(classInitParam);
-            log.info("Successfully created StatsStorage instance: {}, with params: {}", className, classInitParam);
-            return storage;
-        } catch (Exception e) {
-            log.error("Failed to create new StatsStorage: {}, with params: {}", className, classInitParam, e);
+        if( className != null && className.length() > 0 ){
+            try {
+                Class<? extends StatsStorage> clazz = (Class<? extends StatsStorage>)Class.forName(className);
+                StatsStorage storage = clazz.getConstructor(String.class).newInstance(classInitParam);
+                log.info("Successfully created StatsStorage instance: {}, with params: {}", className, classInitParam);
+                return storage;
+            } catch (Exception e) {
+                log.warn("Failed to create new StatsStorage: {}, with params: {}.", className, classInitParam, e);
+            }
         }
         return null;
     }

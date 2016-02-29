@@ -21,6 +21,7 @@
 	<modules>
 		<module>core</module>
 		<module>cdi-ee7</module>
+		<module>cdi-simple-ui</module>
 		<module>example-war</module>
 	</modules>
 
@@ -50,6 +51,11 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>cdi-ee7</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>cdi-simple-ui</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
