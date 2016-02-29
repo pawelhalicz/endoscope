@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 public class GzipFileStorageTest {
     static File dir;
-    static StatsStorage ds;
+    static GzipFileStorage ds;
     static Stats stats;
     static JsonUtil jsonUtil = new JsonUtil();
 
@@ -50,11 +50,11 @@ public class GzipFileStorageTest {
 
     @Test
     public void should_save_and_load_part_file() throws IOException{
-        File f = ds.save(stats);
+        String identifier = ds.save(stats);
 
-        assertEquals( dir.getAbsolutePath() + File.separator + "stats_2001-09-09-01-46-40_2011-03-13-07-06-40.gz", f.getAbsolutePath() );
+        assertEquals( "stats_2001-09-09-01-46-40_2011-03-13-07-06-40.gz", identifier );
 
-        Stats loaded = ds.load(f.getName());
+        Stats loaded = ds.load(identifier);
 
         assertEquals(stats, loaded);
         assertEquals(jsonUtil.toJson(stats), jsonUtil.toJson(loaded));
@@ -62,15 +62,15 @@ public class GzipFileStorageTest {
 
     @Test
     public void should_list_only_parts() throws IOException{
-        File part1 = ds.save(shiftDates(buildCommonStats(), 1000000L));
-        File part2 = ds.save(shiftDates(buildCommonStats(), 2000000L));
+        String part1 = ds.save(shiftDates(buildCommonStats(), 1000000L));
+        String part2 = ds.save(shiftDates(buildCommonStats(), 2000000L));
 
         List<StatsInfo> info = ds.listParts();
         List<String> names = info.stream().map(i -> i.getName()).collect(toList());
 
         assertTrue(names.size() >= 2 );//may be more du to different tests
-        assertTrue(names.contains(part1.getName()));
-        assertTrue(names.contains(part2.getName()));
+        assertTrue(names.contains(part1));
+        assertTrue(names.contains(part2));
     }
 
     private Stats shiftDates(Stats s, long offset) {
@@ -82,58 +82,58 @@ public class GzipFileStorageTest {
     @Test
     public void should_list_only_parts_in_range_1() throws IOException{
         Stats s = buildCommonStats();
-        File part1 = ds.save(shiftDates(s, 1000000L));
+        String part1 = ds.save(shiftDates(s, 1000000L));
 
-        File part2 = ds.save(shiftDates(s, 2000000L));
+        String part2 = ds.save(shiftDates(s, 2000000L));
         Date fromDate = s.getStartDate();
         Date toDate = s.getStartDate();
 
-        File part3 = ds.save(shiftDates(s, 3000000L));
+        String part3 = ds.save(shiftDates(s, 3000000L));
 
         //there might be small time difference due to second precision
         List<StatsInfo> info = ds.findParts(new Date(fromDate.getTime()- 1100L), new Date(toDate.getTime()+1100L));
 
         assertEquals(1, info.size() );
-        assertEquals(part2.getName(), info.get(0).getName() );
+        assertEquals(part2, info.get(0).getName() );
     }
 
     @Test
     public void should_list_only_parts_in_range_2() throws IOException{
         Stats s = buildCommonStats();
-        File part1 = ds.save(shiftDates(s, 1000000L));
+        String part1 = ds.save(shiftDates(s, 1000000L));
         Date fromDate = s.getStartDate();
 
-        File part2 = ds.save(shiftDates(s, 2000000L));
+        String part2 = ds.save(shiftDates(s, 2000000L));
         Date toDate = s.getStartDate();
 
-        File part3 = ds.save(shiftDates(s, 3000000L));
+        String part3 = ds.save(shiftDates(s, 3000000L));
 
         //there might be small time difference due to second precision
         List<StatsInfo> info = ds.findParts(new Date(fromDate.getTime()- 1100L), new Date(toDate.getTime()+1100L));
 
         assertEquals(2, info.size() );
-        assertEquals(part1.getName(), info.get(0).getName() );
-        assertEquals(part2.getName(), info.get(1).getName() );
+        assertEquals(part1, info.get(0).getName() );
+        assertEquals(part2, info.get(1).getName() );
     }
 
 
     @Test
     public void should_list_only_parts_in_range_3() throws IOException{
         Stats s = buildCommonStats();
-        File part1 = ds.save(shiftDates(s, 1000000L));
+        String part1 = ds.save(shiftDates(s, 1000000L));
         Date fromDate = s.getStartDate();
 
-        File part2 = ds.save(shiftDates(s, 2000000L));
+        String part2 = ds.save(shiftDates(s, 2000000L));
 
-        File part3 = ds.save(shiftDates(s, 3000000L));
+        String part3 = ds.save(shiftDates(s, 3000000L));
         Date toDate = s.getStartDate();
 
         //there might be small time difference due to second precision
         List<StatsInfo> info = ds.findParts(new Date(fromDate.getTime()- 1100L), new Date(toDate.getTime()+1100L));
 
         assertEquals(3, info.size() );
-        assertEquals(part1.getName(), info.get(0).getName() );
-        assertEquals(part2.getName(), info.get(1).getName() );
-        assertEquals(part3.getName(), info.get(2).getName() );
+        assertEquals(part1, info.get(0).getName() );
+        assertEquals(part2, info.get(1).getName() );
+        assertEquals(part3, info.get(2).getName() );
     }
 }

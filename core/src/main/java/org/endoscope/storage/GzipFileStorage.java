@@ -51,13 +51,12 @@ public class GzipFileStorage implements StatsStorage {
     }
 
     @Override
-    public File save(Stats stats) throws IOException {
+    public String save(Stats stats) throws IOException {
         ensureDates(stats);
         String fileName = buildPartName(stats.getStartDate(), stats.getEndDate());
-        return writeToGzipFile(stats, fileName);
+        return writeToGzipFile(stats, fileName).getName();
     }
 
-    @Override
     public List<StatsInfo> listParts(){
         String[] arr = dir.list((dir, name) -> NAME_PATTERN.matcher(name).matches());
         return toStatsInfo(arr);
@@ -71,7 +70,6 @@ public class GzipFileStorage implements StatsStorage {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public List<StatsInfo> findParts(Date from, Date to) {
         if( from == null || to == null || to.before(from) ){
             return Collections.emptyList();
@@ -87,7 +85,6 @@ public class GzipFileStorage implements StatsStorage {
         return toStatsInfo(arr);
     }
 
-    @Override
     public Stats load(String name) throws IOException {
         return readFromGzipFile(name);
     }
