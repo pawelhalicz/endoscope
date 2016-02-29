@@ -36,6 +36,7 @@ public class Endoscope {
 
     /**
      * Returns deep copy (thread safe) of whole stats. It might be time consuming do make such copy in case of huge stats.
+     * If you need just part of stats please consider using {@link #processStats(Consumer)}.
      * @return
      */
     public static Stats getCurrentStats(){
@@ -44,5 +45,9 @@ public class Endoscope {
         return result[0];
     }
 
-    public static StatsStorage getDiskStorage(){ return ENGINE.getStatsStorage(); }
+    /**
+     * Access to stored stats.
+     * @return
+     */
+    public static StatsStorage getStatsStorage(){ return ENGINE.getStatsStorage(); }
 }
