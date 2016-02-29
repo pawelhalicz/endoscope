@@ -13,22 +13,31 @@ public class Backup {
     private static final Logger log = getLogger(Backup.class);
 
     private int backupFreqMinutes = Properties.getBackupFreqMinutes();
-    private DiskStorage diskStorage = null;
+    private StatsStorage statsStorage = null;
     private DateUtil dateUtil;
     private Date lastBackup;
 
-    public Backup(DiskStorage diskStorage){
-        this(diskStorage, new DateUtil());
+    /**
+     *
+     * @param statsStorage if null then backup is disabled
+     */
+    public Backup(StatsStorage statsStorage){
+        this(statsStorage, new DateUtil());
     }
 
-    public Backup(DiskStorage diskStorage, DateUtil dateUtil){
-        this.diskStorage = diskStorage;
+    /**
+     *
+     * @param statsStorage if null then backup is disabled
+     * @param dateUtil
+     */
+    public Backup(StatsStorage statsStorage, DateUtil dateUtil){
+        this.statsStorage = statsStorage;
         this.dateUtil = dateUtil;
         lastBackup = dateUtil.now();
     }
 
     public boolean shouldBackup(){
-        if( diskStorage != null && backupFreqMinutes > 0 ){
+        if( statsStorage != null && backupFreqMinutes > 0 ){
             Date now = dateUtil.now();
             long offset = now.getTime() - lastBackup.getTime();
             long minutes = TimeUnit.MILLISECONDS.toMinutes(offset);
@@ -39,8 +48,8 @@ public class Backup {
 
     public void safeBackup(Stats stats){
         try{
-            if( diskStorage != null ){
-                diskStorage.save(stats);
+            if( statsStorage != null ){
+                statsStorage.save(stats);
                 lastBackup = dateUtil.now();
             }
         }catch(Exception e){

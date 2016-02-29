@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import org.endoscope.impl.Engine;
 import org.endoscope.impl.Stats;
-import org.endoscope.storage.DiskStorage;
+import org.endoscope.storage.StatsStorage;
 
 /**
  * Easy to use static facade.
@@ -44,5 +44,5 @@ public class Endoscope {
         return result[0];
     }
 
-    public static DiskStorage getDiskStorage(){ return ENGINE.getDiskStorage(); }
+    public static StatsStorage getDiskStorage(){ return ENGINE.getStatsStorage(); }
 }

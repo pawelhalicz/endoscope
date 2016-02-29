@@ -17,12 +17,16 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.endoscope.impl.Stats;
 
-public class DiskStorage {
+public class GzipFileStorage implements StatsStorage {
     public static final String PART_PREFIX = "part_";
     private File dir;
     private JsonUtil jsonUtil = new JsonUtil();
 
-    public DiskStorage(File dir){
+    public GzipFileStorage(String dir){
+        this(new File(dir));
+    }
+
+    public GzipFileStorage(File dir){
         this.dir = dir;
         if( dir.exists() && dir.isFile() ){
             throw new RuntimeException("location exists and is a file - cannot use it as storage directory: " + dir.getAbsolutePath());
@@ -32,17 +36,20 @@ public class DiskStorage {
         }
     }
 
+    @Override
     public File save(Stats stats) throws IOException {
         ensureDates(stats);
         String fileName = buildPartName(stats.getStartDate(), stats.getEndDate());
         return writeToGzipFile(stats, fileName);
     }
 
+    @Override
     public List<String> listParts(){
         String[] arr = dir.list((dir, name) -> name.startsWith(PART_PREFIX));
         return Arrays.asList(arr);
     }
 
+    @Override
     public Stats load(String name) throws IOException {
         return readFromGzipFile(name);
     }

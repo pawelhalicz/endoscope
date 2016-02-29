@@ -13,13 +13,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.endoscope.storage.DiskStorage.PART_PREFIX;
+import static org.endoscope.storage.GzipFileStorage.PART_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DiskStorageTest {
     static File dir;
-    static DiskStorage ds;
+    static StatsStorage ds;
     static Stats stats;
     static JsonUtil jsonUtil = new JsonUtil();
 
@@ -27,7 +27,7 @@ public class DiskStorageTest {
     public static void before() throws IOException{
         dir = Files.createTempDirectory("DiskStorageTest").toFile();
         System.out.println(dir.getAbsolutePath());
-        ds = new DiskStorage(dir);
+        ds = new GzipFileStorage(dir);
 
         stats = buildCommonStats();
     }
