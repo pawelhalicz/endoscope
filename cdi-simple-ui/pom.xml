@@ -15,13 +15,11 @@
     <dependencies>
         <dependency>
             <groupId>org.endoscope</groupId>
-            <artifactId>cdi-ee7</artifactId>
+            <artifactId>cdi-plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
