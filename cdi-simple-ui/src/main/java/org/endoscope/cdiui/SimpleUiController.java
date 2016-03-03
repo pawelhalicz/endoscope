@@ -4,6 +4,7 @@ import org.endoscope.Endoscope;
 import org.endoscope.impl.Stat;
 import org.endoscope.storage.JsonUtil;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import static java.util.Collections.EMPTY_MAP;
 
+@ApplicationScoped
 @Path("/endoscope")
 public class SimpleUiController {
     private JsonUtil jsonUtil = new JsonUtil();
