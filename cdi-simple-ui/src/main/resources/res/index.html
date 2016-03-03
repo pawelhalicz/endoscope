@@ -5,25 +5,26 @@
     <meta charset="utf-8">
     <meta charset="UTF-8">
     <title>Chart Stack</title>
-    <!--<link href="ui/res/lib/bootstrap/darkly/bootstrap.min.css" rel="stylesheet" type="text/css">-->
     <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="ui/res/lib/flot/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.flot.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.flot.time.min.js"></script>
 
     <script src="ui/res/endoscope.js"></script>
+
+    <!--<link href="ui/res/lib/bootstrap/darkly/bootstrap.min.css" rel="stylesheet" type="text/css">-->
     <link href="ui/res/endoscope.css" rel="stylesheet" type="text/css">
 
     <script id="es-table-template" type="text/x-custom-template">
         <table class="es-table">
             <thead>
-            <tr>
-                <th>id</th>
-                <th>hits</th>
-                <th>max [ms]</th>
-                <th>min [ms]</th>
-                <th>avg [ms]</th>
-            </tr>
+                <tr>
+                    <th>id</th>
+                    <th>hits</th>
+                    <th>max [ms]</th>
+                    <th>min [ms]</th>
+                    <th>avg [ms]</th>
+                </tr>
             </thead>
             <tbody>
             </tbody>
@@ -32,12 +33,16 @@
 
     <script id="es-row-template" type="text/x-custom-template">
         <tr class="es-row">
-            <td class="es-id"><span class="es-id-val btn"></span></td>
+            <td class="es-id"><span class="es-btn"></span></td>
             <td class="es-count"></td>
             <td class="es-max"></td>
             <td class="es-min"></td>
             <td class="es-avg"></td>
         </tr>
+    </script>
+
+    <script id="es-indent-template" type="text/x-custom-template">
+        <span class="es-indent"></span>
     </script>
 
 </head>

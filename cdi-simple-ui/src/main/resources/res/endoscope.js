@@ -2,27 +2,22 @@
 
     function Endoscope(placeholder) {
         this.placeholder = placeholder;
-        this.load();
+        $.ajax("ui/data/top", {dataType: "json"})
+            .done($.proxy(onTopLevelStatsLoad, this))
+            .fail(onTopLevelStatsError);
     }
 
-    Endoscope.prototype.load = function(){
-        //Load table
-        $.ajax("ui/data/top", {dataType: "json"})
-            .done($.proxy(this.onTopLevelStatsLoad, this))
-            .fail($.proxy(this.onTopLevelStatsError, this));
-    };
-
-    Endoscope.prototype.onTopLevelStatsError = function(){
+    var onTopLevelStatsError = function(){
         alert( "failed to load data");
     };
 
-    Endoscope.prototype.onTopLevelStatsLoad = function(topLevelStats) {
+    var onTopLevelStatsLoad = function(topLevelStats) {
         var esTable = $($("#es-table-template").html());
         this.placeholder.append(esTable);
 
         var table = esTable.find("tbody");
         forEachStat(topLevelStats, function(id, stat){
-            var row = $(buildRowHtml(id, stat, 0));
+            var row = buildRow(id, stat, 0);
             table.append(row);
             if( stat.children ){
                 row.click(onRowClick);
@@ -32,39 +27,38 @@
 
     var onRowClick = function() {
         var row = $(this);
-        if( row.hasClass('expanded') ){
+        if( row.hasClass('es-expanded') ){
             removeChildStats(row);
         } else {
-            if( !row.hasClass('loading') ){
+            if( !row.hasClass('es-loading') ){
                 loadChildStats(row);
             }
         }
     };
 
     var removeChildStats = function(row) {
-        row.nextUntil("tr.parent").remove()
-        row.removeClass('expanded');
+        row.nextUntil("tr.es-parent").remove();
+        row.removeClass('es-expanded');
     };
 
     var loadChildStats = function(row) {
-        row.addClass('loading');
+        row.addClass('es-loading');
         var statId = row.data('id');
-        console.log('loading sub stats: ' +  statId);
         $.ajax("ui/data/sub/" + statId, {dataType: "json"})
             .done(function(stats){
-                row.removeClass('loading');
-                row.addClass('expanded');
+                row.removeClass('es-loading');
+                row.addClass('es-expanded');
                 onReceiveChildStats(stats, row, 1);
             })
             .fail(function(){
-                row.removeClass('loading');
+                row.removeClass('es-loading');
                 showLoadError();
             });
     };
 
     var onReceiveChildStats = function(parentStat, parentRow, level) {
         forEachStat(parentStat.children, function(id, childStat){
-            var row = $(buildRowHtml(id, childStat, level));
+            var row = $(buildRow(id, childStat, level));
             parentRow.after(row);
             onReceiveChildStats(childStat, row, level+1)
         });
@@ -81,37 +75,36 @@
         }
     };
 
-    var buildRowHtml = function(id, obj, level){
-        var clazz = '';
-        var data = '';
-        var count = obj.hits;
+    var buildRow = function(id, obj, level){
+        var row = $($("#es-row-template").html());
+
         if( obj.children ){
-            clazz += " has-children";
+            row.addClass("es-has-children");
         }
         if(level == 0){
-            data = id;
-            clazz += ' parent'
+            row.attr("data-id", id);
+            row.addClass("es-parent");
+            row.find(".es-count").append(obj.hits);
         } else {
-            count = obj.ah10/10;
-            clazz += ' child'
+            row.addClass("es-child");
+            row.find(".es-count").append(obj.ah10/10);
         }
 
-        var html = '<tr class="' + clazz + '" data-id="' + data + '">' +
-            '<td class="id"><span class="btn"></span> ' + indent(level) + id + '</td>' +
-            '<td class="count">' + count + '</td>' +
-            '<td class=max">' + obj.max + '</td>' +
-            '<td class="min">' + obj.min + '</td>' +
-            '<td class=avg">' + obj.avg + '</td>' +
-            '</tr>\n';
-        return html;
+        row.find(".es-id").append(indent(level)).append(id);
+        row.find(".es-max").append(obj.max);
+        row.find(".es-min").append(obj.min);
+        row.find(".es-avg").append(obj.avg);
+
+        return row;
     };
 
     var indent = function(count){
+        var indentHtml = $("#es-indent-template").html();
         var result = '';
         for(var i=0; i<count; i++){
-            result += '<span class="indent"></span>'
+            result += indentHtml;
         }
-        return result;
+        return $(result);
     };
 
     $.endoscope = function(placeholder){
