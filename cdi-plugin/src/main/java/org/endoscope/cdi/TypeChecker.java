@@ -1,30 +1,40 @@
 package org.endoscope.cdi;
 
-import javax.ejb.Singleton;
-import javax.ejb.Stateful;
-import javax.ejb.Stateless;
+import org.slf4j.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.ws.rs.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class TypeChecker {
     private static final Logger log = getLogger(TypeChecker.class);
-    public static final List<Class> SUPPORTED_ANNOTATIONS = Collections.unmodifiableList(Arrays.asList(
-            ApplicationScoped.class,
-            Path.class,
-            Stateless.class,
-            Stateful.class,
-            Singleton.class
-    ));
+    public static final List<Class> SUPPORTED_ANNOTATIONS;
+
+    static {
+        List<Class> classes = new ArrayList<>();
+        classes.add(ApplicationScoped.class);
+        classes.add(Path.class);
+        try{
+            log.info("Loading EJB classes - if present");
+            Class classSingleton = Class.forName("javax.ejb.Singleton");
+            Class classStatefull = Class.forName("javax.ejb.Stateful");
+            Class classStateless = Class.forName("javax.ejb.Stateless");
+            classes.add(classSingleton);
+            classes.add(classStatefull);
+            classes.add(classStateless);
+        }catch(Exception e){
+            log.info("Didn't load EJB classes");
+        }
+        SUPPORTED_ANNOTATIONS = Collections.unmodifiableList(classes);
+    }
 
     private List<String> scannedPackages;
     private List<String> excludedPackages;
