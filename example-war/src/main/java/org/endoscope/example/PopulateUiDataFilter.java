@@ -1,12 +1,14 @@
-package org.endoscope.example.impl;
-
-import org.endoscope.example.TheRestController;
+package org.endoscope.example;
 
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * It's demo app so run some processing before entering UI - otherwise it's empty and doesn't look good.
+ */
 @WebFilter(filterName = "PopulateUiDataFilter",urlPatterns = {"/rest/endoscope/ui/*"})
 public class PopulateUiDataFilter implements Filter {
     @Inject
@@ -14,7 +16,10 @@ public class PopulateUiDataFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        controller.process();
+        String url = ((HttpServletRequest)servletRequest).getRequestURL().toString();
+        if( url.endsWith("/ui") ){//main page only
+            controller.process();
+        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
