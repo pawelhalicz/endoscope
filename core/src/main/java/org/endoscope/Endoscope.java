@@ -2,8 +2,8 @@ package org.endoscope;
 
 import java.util.function.Consumer;
 
-import org.endoscope.impl.Engine;
-import org.endoscope.impl.Stats;
+import org.endoscope.core.Engine;
+import org.endoscope.core.Stats;
 import org.endoscope.storage.StatsStorage;
 
 /**

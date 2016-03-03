@@ -1,4 +1,4 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 import java.util.LinkedList;
 import java.util.List;

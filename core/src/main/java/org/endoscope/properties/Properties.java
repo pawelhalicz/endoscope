@@ -1,4 +1,4 @@
-package org.endoscope.impl;
+package org.endoscope.properties;
 
 public class Properties {
     public static String MAX_STAT_COUNT = "endoscope.max.stat.count";
@@ -16,9 +16,11 @@ public class Properties {
     public static String DEFAULT_QUEUE_MAX_SIZE = "1000000";
     public static String DEFAULT_BACKUP_FREQ_MINUTES = "5";
 
+    private static final PropertyProvider propertyProvider = PropertyProviderFactory.create();
+
     private static String safeGetProperty(String name, String defaultValue){
         try{
-            String value = System.getProperty(name, defaultValue);
+            String value = propertyProvider.get(name, defaultValue);
             if( value != null ){
                 value = value.trim();
             }
@@ -29,7 +31,7 @@ public class Properties {
     }
 
     public static boolean isEnabled(){
-        return "true".equalsIgnoreCase(safeGetProperty(ENABLED, "true"));
+        return "true".equalsIgnoreCase(safeGetProperty(ENABLED, "false"));
     }
 
     public static String[] getScannedPackages(){

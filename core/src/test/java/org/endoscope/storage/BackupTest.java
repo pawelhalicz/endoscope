@@ -2,14 +2,14 @@ package org.endoscope.storage;
 
 import java.util.Date;
 
-import org.endoscope.impl.Stats;
+import org.endoscope.core.Stats;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.endoscope.impl.Properties.BACKUP_FREQ_MINUTES;
-import static org.endoscope.impl.PropertyTestUtil.withProperty;
+import static org.endoscope.properties.Properties.BACKUP_FREQ_MINUTES;
+import static org.endoscope.core.PropertyTestUtil.withProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

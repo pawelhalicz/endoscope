@@ -7,7 +7,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import java.lang.annotation.Annotation;
 
 import org.endoscope.Endoscope;
-import org.endoscope.impl.Properties;
+import org.endoscope.properties.Properties;
 
 public class CdiExtension implements Extension {
     private TypeChecker typeChecker = new TypeChecker(

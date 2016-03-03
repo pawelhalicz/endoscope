@@ -1,7 +1,8 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 import java.util.LinkedList;
 
+import org.endoscope.properties.Properties;
 import org.endoscope.storage.Backup;
 import org.endoscope.storage.StatsStorage;
 import org.endoscope.storage.StatsStorageFactory;

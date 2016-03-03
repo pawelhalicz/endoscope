@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>org.endoscope</groupId>
-	<artifactId>endoscope-parent</artifactId>
+	<artifactId>endoscope</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 

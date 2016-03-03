@@ -1,4 +1,4 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 public class PropertyTestUtil {
 

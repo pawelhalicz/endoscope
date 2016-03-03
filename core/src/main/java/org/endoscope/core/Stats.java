@@ -1,4 +1,6 @@
-package org.endoscope.impl;
+package org.endoscope.core;
+
+import org.endoscope.properties.Properties;
 
 import java.beans.Transient;
 import java.util.Date;

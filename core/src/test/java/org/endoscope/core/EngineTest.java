@@ -1,7 +1,8 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 import java.util.Map;
 
+import org.endoscope.properties.Properties;
 import org.junit.Assert;
 import org.junit.Test;
 

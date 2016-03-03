@@ -1,13 +1,13 @@
 package org.endoscope.storage;
 
-import org.endoscope.impl.Properties;
+import org.endoscope.properties.Properties;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static org.endoscope.impl.PropertyTestUtil.withProperty;
+import static org.endoscope.core.PropertyTestUtil.withProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

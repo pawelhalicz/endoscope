@@ -1,4 +1,4 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;

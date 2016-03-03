@@ -1,10 +1,11 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Consumer;
 
+import org.endoscope.properties.Properties;
 import org.endoscope.storage.Backup;
 import org.slf4j.Logger;
 

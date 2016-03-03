@@ -2,7 +2,7 @@ package org.endoscope.storage;
 
 import java.io.IOException;
 
-import org.endoscope.impl.Stats;
+import org.endoscope.core.Stats;
 
 /**
  * Implementation class should have public constructor that accepts single String parameter.

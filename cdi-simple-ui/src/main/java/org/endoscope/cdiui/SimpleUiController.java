@@ -1,7 +1,7 @@
 package org.endoscope.cdiui;
 
 import org.endoscope.Endoscope;
-import org.endoscope.impl.Stat;
+import org.endoscope.core.Stat;
 import org.endoscope.storage.JsonUtil;
 
 import javax.enterprise.context.ApplicationScoped;

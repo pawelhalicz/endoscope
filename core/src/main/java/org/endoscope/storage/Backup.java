@@ -3,8 +3,8 @@ package org.endoscope.storage;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import org.endoscope.impl.Properties;
-import org.endoscope.impl.Stats;
+import org.endoscope.properties.Properties;
+import org.endoscope.core.Stats;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;

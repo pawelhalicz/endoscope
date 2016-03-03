@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.endoscope.impl.Stat;
-import org.endoscope.impl.Stats;
+import org.endoscope.core.Stat;
+import org.endoscope.core.Stats;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

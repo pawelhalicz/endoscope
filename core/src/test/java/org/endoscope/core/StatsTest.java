@@ -1,16 +1,17 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.endoscope.properties.Properties;
 import org.endoscope.storage.JsonUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.endoscope.impl.PropertyTestUtil.withProperty;
+import static org.endoscope.core.PropertyTestUtil.withProperty;
 
 public class StatsTest {
     final JsonUtil jsonUtil = new JsonUtil(true);

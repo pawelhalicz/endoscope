@@ -1,4 +1,4 @@
-package org.endoscope.impl;
+package org.endoscope.core;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static java.util.stream.IntStream.range;
-import static org.endoscope.impl.StatTestUtil.buildRandomStat;
+import static org.endoscope.core.StatTestUtil.buildRandomStat;
 
 public class StatTest {
 

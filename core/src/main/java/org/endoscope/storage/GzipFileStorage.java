@@ -1,7 +1,7 @@
 package org.endoscope.storage;
 
 import org.apache.commons.io.IOUtils;
-import org.endoscope.impl.Stats;
+import org.endoscope.core.Stats;
 import org.slf4j.Logger;
 
 import java.io.*;
