@@ -1,9 +1,13 @@
+body {
+    padding-top: 70px;
+}
+
 .es-table {
     border-spacing: 0px;
     border-collapse: separate;
 }
 .es-table th {
-    border-bottom: 1px solid black;
+    /*border-bottom: 1px solid black;*/
     padding: 0px 10px 0px 10px;
 }
 .es-table td {
@@ -11,10 +15,10 @@
     white-space: nowrap;
 }
 tr.es-child {
-    background-color: #f4f7f8;
+    /*background-color: #444444;*/
 }
 .es-table tr:hover {
-    background-color: #66b2ff;
+    /*background-color: #66b2ff;*/
 }
 span.es-indent {
     padding-left: 15px;

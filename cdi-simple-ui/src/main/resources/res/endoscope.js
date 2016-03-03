@@ -4,11 +4,13 @@
         this.placeholder = placeholder;
         $.ajax("ui/data/top", {dataType: "json"})
             .done($.proxy(onTopLevelStatsLoad, this))
-            .fail(onTopLevelStatsError);
+            .fail(function(){showError("Failed to load stats data")});
     }
 
-    var onTopLevelStatsError = function(){
-        alert( "failed to load data");
+    var showError = function(text){
+        var err = $("#es-error");
+        err.find(".text").text(text);
+        err.show();
     };
 
     var onTopLevelStatsLoad = function(topLevelStats) {
@@ -52,7 +54,7 @@
             })
             .fail(function(){
                 row.removeClass('es-loading');
-                showLoadError();
+                showError("Failed to load child stats");
             });
     };
 
@@ -91,11 +93,29 @@
         }
 
         row.find(".es-id").append(indent(level)).append(id);
-        row.find(".es-max").append(obj.max);
-        row.find(".es-min").append(obj.min);
-        row.find(".es-avg").append(obj.avg);
+        addNumberValue( row.find(".es-max"), obj.max);
+        addNumberValue( row.find(".es-min"), obj.min);
+        addNumberValue( row.find(".es-avg"), obj.avg);
 
         return row;
+    };
+
+    var addNumberValue = function(el, val){
+        var tpl = valueTemplate(val);
+        if( tpl ){
+            val = $($(tpl).html()).text(val);
+        }
+        el.append(val);
+    };
+
+    var valueTemplate = function(time){
+        if( time > 300 ){
+            return "#es-bad-template"
+        }
+        if( time > 100 ){
+            return "#es-warn-template"
+        }
+        return null;
     };
 
     var indent = function(count){

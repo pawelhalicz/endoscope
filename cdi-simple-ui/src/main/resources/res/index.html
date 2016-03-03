@@ -6,24 +6,26 @@
     <meta charset="UTF-8">
     <title>Chart Stack</title>
     <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="ui/res/lib/flot/excanvas.min.js"></script><![endif]-->
+
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.flot.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.flot.time.min.js"></script>
+    <script language="javascript" type="text/javascript" src="ui/res/lib/bootstrap/js/bootstrap.min.js"></script>
 
     <script src="ui/res/endoscope.js"></script>
 
-    <!--<link href="ui/res/lib/bootstrap/darkly/bootstrap.min.css" rel="stylesheet" type="text/css">-->
+    <link href="ui/res/lib/bootstrap/darkly/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="ui/res/endoscope.css" rel="stylesheet" type="text/css">
 
     <script id="es-table-template" type="text/x-custom-template">
-        <table class="es-table">
+        <table class="es-table table table-hover">
             <thead>
                 <tr>
-                    <th>id</th>
-                    <th>hits</th>
-                    <th>max [ms]</th>
-                    <th>min [ms]</th>
-                    <th>avg [ms]</th>
+                    <th>Identifier</th>
+                    <th>Hits</th>
+                    <th>Max [ms]</th>
+                    <th>Min [ms]</th>
+                    <th>Avg [ms]</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,9 +47,40 @@
         <span class="es-indent"></span>
     </script>
 
+    <script id="es-bad-template" type="text/x-custom-template">
+        <span class="label label-danger"></span>
+    </script>
+
+    <script id="es-warn-template" type="text/x-custom-template">
+        <span class="label label-primary"></span>
+    </script>
+
 </head>
 <body>
-<div class="es-placeholder"></div>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Endoscope</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <form class="navbar-form navbar-right" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container es-body">
+    <div id="es-error" class="alert alert-danger alert-dismissible" role="alert" style="display:none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <span class="text"></span>
+    </div>
+    <div class="es-placeholder"></div>
+</div>
+
 <script>
     $( document ).ready(function() {
         $.endoscope(".es-placeholder");
