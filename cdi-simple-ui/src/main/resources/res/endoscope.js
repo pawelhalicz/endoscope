@@ -1,4 +1,8 @@
 (function($) {
+    var defaults = {
+        valueBadLevel:  300, //3000
+        valueWarnLevel: 100, //1000
+    };
 
     function Endoscope(placeholder) {
         this.placeholder = placeholder;
@@ -109,10 +113,10 @@
     };
 
     var valueTemplate = function(time){
-        if( time > 300 ){
+        if( time > defaults.valueBadLevel ){
             return "#es-bad-template"
         }
-        if( time > 100 ){
+        if( time > defaults.valueWarnLevel ){
             return "#es-warn-template"
         }
         return null;
