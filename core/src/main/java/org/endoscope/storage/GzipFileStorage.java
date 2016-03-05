@@ -97,7 +97,7 @@ public class GzipFileStorage implements StatsStorage {
         return PREFIX + SEPARATOR + sdf.format(dateStart) + SEPARATOR + sdf.format(dateEnd) + "." + EXTENSION;
     }
 
-    private DateFormat getDateFormat() {
+    protected DateFormat getDateFormat() {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         sdf.setTimeZone(TimeZone.getTimeZone(DATE_TIMEZONE));
         return sdf;

@@ -1,13 +1,13 @@
 package org.endoscope.core;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.function.Consumer;
-
 import org.endoscope.properties.Properties;
 import org.endoscope.storage.Backup;
 import org.slf4j.Logger;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.function.Function;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -61,9 +61,9 @@ public class StatsProcessor {
         }
     }
 
-    public void process(Consumer<Stats> consumer){
+    public <T> T process(Function<Stats, T> function){
         synchronized(stats){
-            consumer.accept(stats);
+            return function.apply(stats);
         }
     }
 

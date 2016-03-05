@@ -9,7 +9,10 @@ import java.io.IOException;
 /**
  * It's demo app so run some processing before entering UI - otherwise it's empty and doesn't look good.
  */
-@WebFilter(filterName = "PopulateUiDataFilter",urlPatterns = {"/rest/endoscope/ui/*"})
+@WebFilter(filterName = "PopulateUiDataFilter",urlPatterns = {
+        "/rest/endoscope/current/ui/*",
+        "/rest/endoscope/storage/ui/*"
+})
 public class PopulateUiDataFilter implements Filter {
     @Inject
     TheRestController controller;

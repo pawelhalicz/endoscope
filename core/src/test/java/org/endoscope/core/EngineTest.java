@@ -1,10 +1,10 @@
 package org.endoscope.core;
 
-import java.util.Map;
-
 import org.endoscope.properties.Properties;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Map;
 
 public class EngineTest {
     @Test
@@ -26,6 +26,7 @@ public class EngineTest {
             Assert.assertTrue(map.containsKey("a11"));
             Assert.assertEquals(1, map.get("a1").getChildren().size());
             Assert.assertNotNull(map.get("a1").getChildren().get("a11"));
+            return null;
         });
     }
 

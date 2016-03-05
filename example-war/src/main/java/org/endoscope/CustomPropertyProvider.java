@@ -2,7 +2,7 @@ package org.endoscope;
 
 import org.endoscope.properties.AbstractCustomPropertyProvider;
 import org.endoscope.properties.Properties;
-import org.endoscope.storage.GzipFileStorage;
+import org.endoscope.storage.SearchableGzipFileStorage;
 import org.slf4j.Logger;
 
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ public class CustomPropertyProvider extends AbstractCustomPropertyProvider {
             log.info("Using storage directory: {}", dir);
 
             override.put(Properties.ENABLED, "true");
-            override.put(Properties.STATS_STORAGE_CLASS, GzipFileStorage.class.getName());
+            override.put(Properties.STATS_STORAGE_CLASS, SearchableGzipFileStorage.class.getName());
             override.put(Properties.STATS_STORAGE_CLASS_INIT_PARAM, dir);
 
         } catch (Exception e) {

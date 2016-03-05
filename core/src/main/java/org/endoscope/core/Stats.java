@@ -78,6 +78,11 @@ public class Stats {
 
     @Transient
     public Stats deepCopy(){
+        return deepCopy(true);
+    }
+
+    @Transient
+    public Stats deepCopy(boolean withChildren){
         Stats s = new Stats();
 
         s.statsLeft = statsLeft;
@@ -86,9 +91,34 @@ public class Stats {
         s.startDate = startDate;
         s.endDate = endDate;
 
-        map.forEach((k, v) -> s.map.put(k, v.deepCopy()));
+        map.forEach((k, v) -> s.map.put(k, v.deepCopy(withChildren)));
 
         return s;
+    }
+
+    @Transient
+    public void merge(Stats inc, boolean withChildren){
+        //too much hassle with merging statsLeft
+
+        lost = lost + inc.lost;
+        if( inc.fatalError != null && fatalError == null ){
+            fatalError = inc.fatalError;
+        }
+        if( startDate == null || (inc.startDate != null && inc.startDate.before(startDate)) ){
+            startDate = inc.startDate;
+        }
+        if( endDate == null || (inc.endDate != null && inc.endDate.after(endDate)) ){
+            endDate = inc.endDate;
+        }
+
+        inc.map.forEach((k, v) -> {
+            Stat s = map.get(k);
+            if( s == null ){
+                map.put(k, v.deepCopy(withChildren) );
+            } else {
+                s.merge(v, withChildren);
+            }
+        });
     }
 
     @Transient

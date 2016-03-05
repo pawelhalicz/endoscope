@@ -2,11 +2,13 @@
     var defaults = {
         valueBadLevel:  300, //3000
         valueWarnLevel: 100, //1000
+        statUrl: "ui/data/sub/{id}?from=0&to=1457215814636",
+        topUrl: "ui/data/top?from=0&to=1457215814636"
     };
 
     function Endoscope(placeholder) {
         this.placeholder = placeholder;
-        $.ajax("ui/data/top", {dataType: "json"})
+        $.ajax(defaults.topUrl, {dataType: "json"})
             .done($.proxy(onTopLevelStatsLoad, this))
             .fail(function(){showError("Failed to load stats data")});
     }
@@ -50,7 +52,7 @@
     var loadChildStats = function(row) {
         row.addClass('es-loading');
         var statId = row.data('id');
-        $.ajax("ui/data/sub/" + statId, {dataType: "json"})
+        $.ajax(defaults.statUrl.replace("{id}", statId), {dataType: "json"})
             .done(function(stats){
                 row.removeClass('es-loading');
                 row.addClass('es-expanded');

@@ -140,7 +140,13 @@ public class Stat {
         parentCount++;
     }
 
+    @Transient
     public void merge(Stat inc){
+        merge(inc, true);
+    }
+
+    @Transient
+    public void merge(Stat inc, boolean withChildren){
         max = Math.max(max, inc.max);
         min = Math.min(min, inc.min);
         if( hits + inc.hits > 0 ){
@@ -153,9 +159,17 @@ public class Stat {
             parentCount += inc.parentCount;
         }
 
-        mergeChildren(inc);
+        if( withChildren ){
+            mergeChildren(inc);
+        } else {
+            //we want to mark that there are children
+            if( inc.getChildren() != null ){
+                ensureChildrenMap();
+            }
+        }
     }
 
+    @Transient
     private void mergeChildren(Stat s2){
         if( s2.getChildren() == null ){
             return;
@@ -172,9 +186,15 @@ public class Stat {
         });
     }
 
+    @Transient
     public Stat deepCopy(){
+        return deepCopy(true);
+    }
+
+    @Transient
+    public Stat deepCopy(boolean withChildren){
         Stat s = new Stat();
-        s.merge(this);
+        s.merge(this, withChildren);
         s.setMin(min);
         return s;
     }
