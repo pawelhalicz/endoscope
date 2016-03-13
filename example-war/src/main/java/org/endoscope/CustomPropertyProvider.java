@@ -14,13 +14,13 @@ public class CustomPropertyProvider extends AbstractCustomPropertyProvider {
 
     public CustomPropertyProvider() {
         try {
-            String dir = Files.createTempDirectory("endoscope").toFile().getAbsolutePath();
-            log.info("Using storage directory: {}", dir);
-
             override.put(Properties.ENABLED, "true");
             override.put(Properties.STATS_STORAGE_CLASS, SearchableGzipFileStorage.class.getName());
-            override.put(Properties.STATS_STORAGE_CLASS_INIT_PARAM, dir);
-
+            if( get(Properties.STATS_STORAGE_CLASS_INIT_PARAM, null) == null ){
+                String dir = Files.createTempDirectory("endoscope").toFile().getAbsolutePath();
+                override.put(Properties.STATS_STORAGE_CLASS_INIT_PARAM, dir);
+            }
+            log.info("Using storage directory: {}", get(Properties.STATS_STORAGE_CLASS_INIT_PARAM, null));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

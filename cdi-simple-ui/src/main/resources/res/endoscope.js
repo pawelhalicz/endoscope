@@ -23,7 +23,35 @@
 
             loadTopLevel();
         });
+
+        $("#es-search").typeWatch({ //https://github.com/dennyferra/TypeWatch
+            callback: onSearch,
+            wait: 500,
+            highlight: true,
+            captureLength: 2
+        });
     }
+
+    var onSearch = function(value){
+        value = value.toLowerCase();
+
+        closeAllRows();
+
+        placeholder.find("tbody tr.es-parent").each(function(index, row){
+            row = $(row);
+            if( row.data().id.toLowerCase().indexOf(value) >= 0){
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+    };
+
+    var closeAllRows = function(){
+        placeholder.find("tbody tr.es-expanded").each(function(index, row){
+            removeChildStats($(row));
+        });
+    };
 
     var loadTopLevel = function(){
         $.ajax(options.topUrl, {
