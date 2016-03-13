@@ -3,7 +3,7 @@ package org.endoscope.core;
 import java.util.LinkedList;
 
 import org.endoscope.properties.Properties;
-import org.endoscope.storage.Backup;
+import org.endoscope.storage.StatsCyclicWriter;
 import org.endoscope.storage.StatsStorage;
 import org.endoscope.storage.StatsStorageFactory;
 
@@ -11,13 +11,13 @@ public class Engine {
     private ThreadLocal<LinkedList<Context>> contextStack = new ThreadLocal<>();
     private Boolean enabled = null;
     private StatsStorage statsStorage = null;//may stay null if disabled or cannot setup it
-    private Backup backup;
+    private StatsCyclicWriter statsCyclicWriter;
     private StatsProcessor statsProcessor;
 
     public Engine(){
         statsStorage = new StatsStorageFactory().safeCreate();//may return null
-        backup = new Backup(statsStorage);
-        statsProcessor = new StatsProcessor(backup);
+        statsCyclicWriter = new StatsCyclicWriter(statsStorage);
+        statsProcessor = new StatsProcessor(statsCyclicWriter);
     }
 
     public boolean isEnabled(){

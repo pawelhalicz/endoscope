@@ -1,7 +1,7 @@
 package org.endoscope.core;
 
 import org.endoscope.properties.Properties;
-import org.endoscope.storage.Backup;
+import org.endoscope.storage.StatsCyclicWriter;
 import org.slf4j.Logger;
 
 import java.util.concurrent.ExecutorService;
@@ -19,19 +19,19 @@ import static org.slf4j.LoggerFactory.getLogger;
  * This is critical requirement as it would affect monitored application performance.
  *
  * Operations on stats also needs to be thread safe as we don't know who runs #process method.
- * All stats operations might take a lot of time: backup, processing and updates (in case of complex stats).
+ * All stats operations might take a lot of time: save, processing and updates (in case of complex stats).
  * Because of that we need different thread that will move data from queue to stats.
  */
 public class StatsProcessor {
     private static final Logger log = getLogger(StatsProcessor.class);
 
-    private Stats stats;//will get reset after each backup
+    private Stats stats;//will get reset after each save
     private LinkedBlockingDeque<Context> queue;
-    private Backup backup;
+    private StatsCyclicWriter statsCyclicWriter;
 
-    public StatsProcessor(Backup backup) {
-        if( backup == null ){
-            throw new IllegalArgumentException("backup cannot be null");
+    public StatsProcessor(StatsCyclicWriter statsCyclicWriter) {
+        if( statsCyclicWriter == null ){
+            throw new IllegalArgumentException("stats cyclic writer cannot be null");
         }
 
         stats = new Stats();
@@ -40,7 +40,7 @@ public class StatsProcessor {
         }
 
         queue = new LinkedBlockingDeque<>(Properties.getMaxQueueSize());
-        this.backup = backup;
+        this.statsCyclicWriter = statsCyclicWriter;
 
         ExecutorService collector = Executors.newSingleThreadExecutor(runnable -> {
             Thread t = Executors.defaultThreadFactory().newThread(runnable);
@@ -71,10 +71,10 @@ public class StatsProcessor {
         return queue.size();
     }
 
-    private void safeBackupIfNeeded(){
-        if( backup.shouldBackup() ){
+    private void safeSaveIfNeeded(){
+        if( statsCyclicWriter.shouldSave() ){
             synchronized(stats){
-                backup.safeBackup(stats);
+                statsCyclicWriter.safeSave(stats);
                 stats = new Stats();
             }
         }
@@ -89,7 +89,7 @@ public class StatsProcessor {
                 ctx = queue.pollFirst();
             }
         }
-        safeBackupIfNeeded();
+        safeSaveIfNeeded();
     }
 
     //internal use - accessed from processing thread

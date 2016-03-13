@@ -38,7 +38,7 @@ public class StorageStatsUiController extends StaticResourceController{
     }
 
     private boolean isRange(Long from, Long to){
-        return from != null && to != null;
+        return from != null && to != null && from.compareTo(to) < 0;
     }
 
     //TODO cache?

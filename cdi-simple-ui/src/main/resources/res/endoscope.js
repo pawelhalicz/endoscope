@@ -2,8 +2,8 @@
     var defaults = {
         valueBadLevel:  300, //3000
         valueWarnLevel: 100, //1000
-        statUrl: "ui/data/sub/{id}?from=0&to=1457215814636",
-        topUrl: "ui/data/top?from=0&to=1457215814636"
+        statUrl: "ui/data/sub/{id}?from=0&to=0",
+        topUrl: "ui/data/top?from=0&to=0"
     };
 
     function Endoscope(placeholder) {
