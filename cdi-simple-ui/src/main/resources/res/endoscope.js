@@ -6,7 +6,9 @@
         topUrl: "ui/data/top",
         from: null,
         to: null,
-        past: 3600000 //1 hour
+        past: 3600000, //1 hour,
+        sortField: 'id',
+        sortDirection: 1
     };
 
     var placeholder;
@@ -78,13 +80,61 @@
         placeholder.append(esTable);
 
         var table = esTable.find("tbody");
+        var orderedStats = [];
         forEachStat(topLevelStats, function(id, stat){
-            var row = buildRow(id, stat, 0);
+            stat.id = id;
+            orderedStats.push( stat );
+        });
+        orderedStats.sort(onSortTopLevel);
+        orderedStats.forEach(function(stat){
+            var row = buildRow(stat.id, stat, 0);
             table.append(row);
             if( stat.children ){
                 row.click(onRowClick);
             }
         });
+
+        var headers = esTable.find("thead th");
+        headers.click(onSortColumnClick);
+        headers.each(function(index, th){
+            th = $(th);
+            var span = th.find("span");
+            if(options.sortField == th.data().sort){
+                if( options.sortDirection> 0 ){
+                    span.addClass("glyphicon glyphicon-sort-by-attributes");
+                } else {
+                    span.addClass("glyphicon glyphicon-sort-by-attributes-alt");
+                }
+            } else {
+                span.removeClass("glyphicon glyphicon-sort-by-attributes glyphicon-sort-by-attributes-alt");
+            }
+        });
+    };
+
+    var onSortColumnClick = function(){
+        var th = $(this);
+        var colId = th.data().sort;
+        if( colId == options.sortField ){
+            options.sortDirection *= -1;
+        } else {
+            options.sortField = colId;
+            options.sortDirection = colId == "id" ? 1 : -1;
+        }
+        loadTopLevel();
+    };
+
+    var onSortTopLevel = function(a, b){
+        switch(options.sortField){
+            case "hits": return (a.hits - b.hits) * options.sortDirection;
+            case "min":  return (a.min - b.min)   * options.sortDirection;
+            case "max":  return (a.max - b.max)   * options.sortDirection;
+            case "avg":  return (a.avg - b.avg)   * options.sortDirection;
+            default:
+                if( a.id == b.id ){
+                    return 0;
+                }
+                return (a.id < b.id ? -1 : 1) * options.sortDirection;
+        }
     };
 
     var onRowClick = function() {

@@ -9,6 +9,10 @@ body {
 .es-table th {
     /*border-bottom: 1px solid black;*/
     padding: 0px 10px 0px 10px;
+    cursor: pointer;
+}
+.es-table th span {
+    margin-right: 10px;
 }
 .es-table td {
     padding: 5px;
