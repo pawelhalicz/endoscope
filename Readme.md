@@ -16,20 +16,16 @@ You may run some additional processing in order to change statistics by entering
 
 Stored Stats
 ------------
-Make sure you have enabled stats storage by setting correct properties:
-
-    endoscope.storage.class=org.endoscope.storage.GzipFileStorage
-    endoscope.storage.class.init.param=/logs/endoscope
-    
-Stats will be stored with default frequency 5 minutes unless you set your own value:
-
-    endoscope.save.feq.minutes=5
-
-Deploy WAR to Wildfy and open stats UI page:
+Deploy example WAR to Wildfy and open stats UI page:
 
     http://localhost:8080/example-war/rest/endoscope/storage/ui
+        
+Storage directory changes every time to restart application. 
+In example application those values are hardcoded in:
+    
+    org.endoscope.CustomPropertyProvider
 
-UI development
+Development
 --------------
 You may serve static files from disk insterad from JAR resource by settings following property:
  

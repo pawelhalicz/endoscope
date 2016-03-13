@@ -51,6 +51,7 @@ public class GzipFileStorage implements StatsStorage {
         if( !dir.exists() && !dir.mkdirs() ){
             throw new RuntimeException("cannot create storage directory: " + dir.getAbsolutePath());
         }
+        log.info("Using storage directory: {}", dir.getAbsolutePath());
     }
 
     @Override

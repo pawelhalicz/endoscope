@@ -1,17 +1,42 @@
 (function($) {
-    var defaults = {
+    var options = {
         valueBadLevel:  300, //3000
         valueWarnLevel: 100, //1000
-        statUrl: "ui/data/sub/{id}?from=0&to=0",
-        topUrl: "ui/data/top?from=0&to=0"
+        statUrl: "ui/data/sub/{id}",
+        topUrl: "ui/data/top",
+        from: null,
+        to: null,
+        past: 3600000 //1 hour
     };
 
-    function Endoscope(placeholder) {
-        this.placeholder = placeholder;
-        $.ajax(defaults.topUrl, {dataType: "json"})
-            .done($.proxy(onTopLevelStatsLoad, this))
-            .fail(function(){showError("Failed to load stats data")});
+    var placeholder;
+
+    function Endoscope(_placeholder) {
+        placeholder = _placeholder;
+
+        loadTopLevel();
+
+        $("#es-past").change(function(){
+            options.past = $(this).val();
+            options.from = null;
+            options.to = null;
+
+            loadTopLevel();
+        });
     }
+
+    var loadTopLevel = function(){
+        $.ajax(options.topUrl, {
+            dataType: "json",
+            data: {
+                from: options.from,
+                to: options.to,
+                past: options.past
+            }
+        })
+        .done($.proxy(onTopLevelStatsLoad, this))
+        .fail(function(){showError("Failed to load stats data")});
+    };
 
     var showError = function(text){
         var err = $("#es-error");
@@ -20,8 +45,9 @@
     };
 
     var onTopLevelStatsLoad = function(topLevelStats) {
+        placeholder.empty();
         var esTable = $($("#es-table-template").html());
-        this.placeholder.append(esTable);
+        placeholder.append(esTable);
 
         var table = esTable.find("tbody");
         forEachStat(topLevelStats, function(id, stat){
@@ -52,16 +78,23 @@
     var loadChildStats = function(row) {
         row.addClass('es-loading');
         var statId = row.data('id');
-        $.ajax(defaults.statUrl.replace("{id}", statId), {dataType: "json"})
-            .done(function(stats){
-                row.removeClass('es-loading');
-                row.addClass('es-expanded');
-                onReceiveChildStats(stats, row, 1);
-            })
-            .fail(function(){
-                row.removeClass('es-loading');
-                showError("Failed to load child stats");
-            });
+        $.ajax(options.statUrl.replace("{id}", statId), {
+            dataType: "json",
+            data: {
+                from: options.from,
+                to: options.to,
+                past: options.past
+            }
+        })
+        .done(function(stats){
+            row.removeClass('es-loading');
+            row.addClass('es-expanded');
+            onReceiveChildStats(stats, row, 1);
+        })
+        .fail(function(){
+            row.removeClass('es-loading');
+            showError("Failed to load child stats");
+        });
     };
 
     var onReceiveChildStats = function(parentStat, parentRow, level) {
@@ -115,10 +148,10 @@
     };
 
     var valueTemplate = function(time){
-        if( time > defaults.valueBadLevel ){
+        if( time > options.valueBadLevel ){
             return "#es-bad-template"
         }
-        if( time > defaults.valueWarnLevel ){
+        if( time > options.valueWarnLevel ){
             return "#es-warn-template"
         }
         return null;
