@@ -207,8 +207,7 @@
         var row = $($("#es-chart-row-template").html());
         parentRow.after(row);
 
-        var container = row.find("td .es-chart-container");
-        var options = {
+        var chartOptions = {
             legend: {
                 backgroundColor: null,
                 show: true,
@@ -229,48 +228,32 @@
                 mode: "time",
                 timeformat: isTimePeriodMoreThan2Days() ? "%m/%d" : "%H:%M"
             },
-            yaxes: [
-                {
-                    color: "#777777",
-                    font: {"color": "#ffffff"},
-                    position: "left",
-                    label: "time",
-                    tickFormatter: function (x) {return x + " ms";}
-                },
-                {
-                    color: "#777777",
-                    font: {"color": "#ffffff"},
-                    position: "right",
-                    label: "hits",
-                    tickDecimals: 2
-                }
-            ],
-            /*
-            series: {
-                bars: {
-                    align: "center",
-                    barWidth: 0.7,
-                    fill: true,
-                    fillColor: {
-                        colors: [ { opacity: 0.99 }, { opacity: 0.99 } ]
-                    }
-                },
-            }*/
+            yaxis: {
+                min: 0,
+                color: "#777777",
+                font: {"color": "#ffffff"},
+                labelWidth: 50
+            }
         };
 
-        //Parcentiles:
-        // http://www.flotcharts.org/flot/examples/percentiles/index.html
-
-        //Color with threshhold:
-        //http://www.flotcharts.org/flot/examples/threshold/index.html
-        var data = [
-            { id: "min", data: extractSeries(histogram, "min"), lines: { show: true, lineWidth: 0, fill: false }, color: "#5bc0de" },
-            { id: "max", data: extractSeries(histogram, "max"), lines: { show: true, lineWidth: 0, fill: 0.4 }, color: "#5bc0de", fillBetween: "min"},
-            { id: "avg", label: "Time", data: extractSeries(histogram, "avg"), lines: { show: true, lineWidth: 3 }, color: "#f0ad4e" },
-            { label: "Hits", data: extractSeries(histogram, "hits"), lines: { show: true, steps: true, lineWidth: 2 }, color: "#5cb85c", yaxis: 2 }
+        var data, container, opts;
+        data = [
+            { id: "warn", data: extractSeries(histogram, "warn"), lines: { show: true, lineWidth: 1 }, color: "#f39c12" },
+            { id: "bad",  data: extractSeries(histogram, "bad"),  lines: { show: true, lineWidth: 1 }, color: "#e74c3c" },
+            { id: "min",  data: extractSeries(histogram, "min"),  lines: { show: true, lineWidth: 0, fill: false }, color: "#33b5e5" },
+            { id: "max",  data: extractSeries(histogram, "max"),  lines: { show: true, lineWidth: 0, fill: 0.4 }, color: "#33b5e5", fillBetween: "min"},
+            { label: "Average Time [ms]", id: "avg",  data: extractSeries(histogram, "avg"), lines: { show: true, lineWidth: 3 }, color: "#33b5e5" }
         ];
+        container = row.find("td .es-chart-container");
+        opts = $.extend(true, {}, chartOptions, {yaxis: {tickFormatter: function (x) {return x + " ms";}}});
+        $.plot(container, data, opts);
 
-        $.plot(container, data, options);
+        data = [
+            { label: "Hits per second", id: "hits", data: extractSeries(histogram, "hits"), lines: { show: true, steps: true, lineWidth: 3, fill: 0.7 }, color: "#5cb85c"}
+        ];
+        container = row.find("td .es-chart-hits-container");
+        opts = $.extend(true, {}, chartOptions, {yaxis: {tickDecimals: 2}});
+        $.plot(container, data, opts);
 
         //TODO plot details
         // require grid.hoverable: true
@@ -281,15 +264,25 @@
 
     var extractSeries = function(histogram, property){
         var result = [];
-        histogram.forEach(function(h){
-            var tick = [h.startDate, h[property]]
-            if( property == "hits" ){
-                //convert to average tick per second, as total hits doesn't look well espiecially when tick length may differ
-                var seconds = (h.endDate - h.startDate)/1000;
-                tick[1] = tick[1]/seconds;
-            }
-            result.push(tick);
-        });
+        if( property == "bad" ){
+            result.push([histogram[0].startDate, options.valueBadLevel]);
+            result.push([histogram[histogram.length-1].startDate, options.valueBadLevel]);
+            var x=0;
+        } else if( property == "warn" ){
+            result.push([histogram[0].startDate, options.valueWarnLevel]);
+            result.push([histogram[histogram.length-1].startDate, options.valueWarnLevel]);
+            var x=0;
+        } else {
+            histogram.forEach(function(h){
+                var tick = [h.startDate, h[property]]
+                if( property == "hits" ){
+                    //convert to average tick per second, as total hits doesn't look well espiecially when tick length may differ
+                    var seconds = (h.endDate - h.startDate)/1000;
+                    tick[1] = tick[1]/seconds;
+                }
+                result.push(tick);
+            });
+        }
         return result;
     };
 
