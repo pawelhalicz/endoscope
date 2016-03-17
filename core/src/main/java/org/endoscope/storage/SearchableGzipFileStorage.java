@@ -4,11 +4,11 @@ import org.endoscope.core.Stat;
 import org.endoscope.core.Stats;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.util.Date;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+//TODO move it to ui module?
 /**
  * This storage is for demo purposes as it's not efficient.
  * Notice that it loads complete stats in order to extract just part of it.
@@ -20,14 +20,6 @@ public class SearchableGzipFileStorage extends GzipFileStorage implements Search
         super(dir);
     }
 
-    private Stats safeLoad(String name) {
-        try {
-            return load(name);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public Stats topLevel(Date from, Date to) {
         log.info("Searching for top level stats from {} to {}", getDateFormat().format(from), getDateFormat().format(to));
@@ -36,22 +28,35 @@ public class SearchableGzipFileStorage extends GzipFileStorage implements Search
                 .peek( statsInfo -> log.info("Checking {}", statsInfo.getName()))
                 .filter(statsInfo -> statsInfo.inRange(from, to))
                 .peek( statsInfo -> log.info("Matches: {}", statsInfo.getName()))
-                .map( statsInfo -> safeLoad(statsInfo.getName()))
+                .map( statsInfo -> load(statsInfo.getName()))
                 .forEach(stats -> merged.merge(stats, false));
         return merged;
     }
 
     @Override
-    public Stat stat(String id, Date from, Date to) {
+    public StatDetails stat(String id, Date from, Date to) {
         log.info("Searching for stat {} from {} to {}", id, getDateFormat().format(from), getDateFormat().format(to));
-        Stat merged = new Stat();
+        StatDetails result = new StatDetails();
+
         listParts().stream()
                 .peek( statsInfo -> log.info("Checking {}", statsInfo.getName()))
                 .filter(statsInfo -> statsInfo.inRange(from, to))
                 .peek( statsInfo -> log.info("Matches: {}", statsInfo.getName()))
-                .map( statsInfo -> safeLoad(statsInfo.getName()).getMap().get(id))
-                .filter(stat -> stat != null)
-                .forEach(stat -> merged.merge(stat, true));
-        return merged;
+                .forEach( statsInfo -> {
+                    Stats stats = load(statsInfo.getName());
+                    Stat details = stats.getMap().get(id);
+                    if( details != null ){
+                        result.getMerged().merge(details, true);
+                        //TODO merge to no more than 100 points
+                        result.getHistogram().add(
+                                new StatHistory(
+                                    details,
+                                    stats.getStartDate(),
+                                    stats.getEndDate()
+                                ));
+
+                    }
+                });
+        return result;
     }
 }

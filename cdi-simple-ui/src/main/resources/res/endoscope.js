@@ -2,7 +2,7 @@
     var options = {
         valueBadLevel:  300, //3000
         valueWarnLevel: 100, //1000
-        statUrl: "ui/data/sub/{id}",
+        statUrl: "ui/data/details/{id}",
         topUrl: "ui/data/top",
         from: null,
         to: null,
@@ -167,7 +167,7 @@
         .done(function(stats){
             row.removeClass('es-loading');
             row.addClass('es-expanded');
-            onReceiveChildStats(stats, row, 1);
+            onDetailStatsReceive(stats, row, 1);
         })
         .fail(function(){
             row.removeClass('es-loading');
@@ -175,11 +175,16 @@
         });
     };
 
-    var onReceiveChildStats = function(parentStat, parentRow, level) {
+    var onDetailStatsReceive = function(details, parentRow, level) {
+        processChildStats(details.merged, parentRow, level);
+        buildChartRow(details.histogram, parentRow);
+    };
+
+    var processChildStats = function(parentStat, parentRow, level) {
         forEachStat(parentStat.children, function(id, childStat){
             var row = $(buildRow(id, childStat, level));
             parentRow.after(row);
-            onReceiveChildStats(childStat, row, level+1)
+            processChildStats(childStat, row, level+1)
         });
     };
 
@@ -192,6 +197,100 @@
                 fn(id, stat[id]);
             }
         }
+    };
+
+    var isTimePeriodMoreThan2Days = function(){
+        return options.past > 2 * 86400000;
+    };
+
+    var buildChartRow = function(histogram, parentRow){
+        var row = $($("#es-chart-row-template").html());
+        parentRow.after(row);
+
+        var container = row.find("td .es-chart-container");
+        var options = {
+            legend: {
+                backgroundColor: null,
+                show: true,
+                margin: 15,
+                backgroundOpacity: 0,
+                labelBoxBorderColor :"#d3d3d3",
+                noColumns: 2
+            },
+            grid: {
+                borderWidth: 1,
+                color: "#777777",
+                hoverable: true,
+                autoHighlight: false
+            },
+            xaxis:{
+                color: "#777777",
+                font: {"color": "#ffffff"},
+                mode: "time",
+                timeformat: isTimePeriodMoreThan2Days() ? "%m/%d" : "%H:%M"
+            },
+            yaxes: [
+                {
+                    color: "#777777",
+                    font: {"color": "#ffffff"},
+                    position: "left",
+                    label: "time",
+                    tickFormatter: function (x) {return x + " ms";}
+                },
+                {
+                    color: "#777777",
+                    font: {"color": "#ffffff"},
+                    position: "right",
+                    label: "hits",
+                    tickDecimals: 2
+                }
+            ],
+            /*
+            series: {
+                bars: {
+                    align: "center",
+                    barWidth: 0.7,
+                    fill: true,
+                    fillColor: {
+                        colors: [ { opacity: 0.99 }, { opacity: 0.99 } ]
+                    }
+                },
+            }*/
+        };
+
+        //Parcentiles:
+        // http://www.flotcharts.org/flot/examples/percentiles/index.html
+
+        //Color with threshhold:
+        //http://www.flotcharts.org/flot/examples/threshold/index.html
+        var data = [
+            { id: "min", data: extractSeries(histogram, "min"), lines: { show: true, lineWidth: 0, fill: false }, color: "#5bc0de" },
+            { id: "max", data: extractSeries(histogram, "max"), lines: { show: true, lineWidth: 0, fill: 0.4 }, color: "#5bc0de", fillBetween: "min"},
+            { id: "avg", label: "Time", data: extractSeries(histogram, "avg"), lines: { show: true, lineWidth: 3 }, color: "#f0ad4e" },
+            { label: "Hits", data: extractSeries(histogram, "hits"), lines: { show: true, steps: true, lineWidth: 2 }, color: "#5cb85c", yaxis: 2 }
+        ];
+
+        $.plot(container, data, options);
+
+        //TODO plot details
+        // require grid.hoverable: true
+        //$(container).bind( "plothover", function ( evt, position, item ) {
+        //    console.log(JSON.stringify({pos: position, item: item}));
+        //});
+    };
+
+    var extractSeries = function(histogram, property){
+        var result = [];
+        histogram.forEach(function(h){
+            var tick = [h.startDate, h[property]]
+            if( property == "hits" ){
+                //convert to average tick per second, as total hits doesn't look well espiecially when tick length may differ
+                var seconds = (h.endDate - h.startDate)/1000;
+                tick[1] = tick[1]/seconds;
+            }
+            result.push(tick);
+        });
+        return result;
     };
 
     var buildRow = function(id, obj, level){

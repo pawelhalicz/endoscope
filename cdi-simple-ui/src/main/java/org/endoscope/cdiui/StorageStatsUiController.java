@@ -5,6 +5,7 @@ import org.endoscope.core.Stat;
 import org.endoscope.core.Stats;
 import org.endoscope.storage.JsonUtil;
 import org.endoscope.storage.SearchableStatsStorage;
+import org.endoscope.storage.StatDetails;
 import org.slf4j.Logger;
 
 import javax.ws.rs.*;
@@ -27,15 +28,23 @@ public class StorageStatsUiController extends StaticResourceController{
         return topLevelStatsSerializer.serialize(stats.getMap());
     }
 
+    //TODO remove after switching to details with histogram
     @GET
     @Path("ui/data/sub/{id}")
     @Produces("application/json")
     public String sub(@PathParam("id") String id, @QueryParam("from") String from, @QueryParam("to") String to,
                       @QueryParam("past") String past){
-        Stat child = stat(id, toLong(from), toLong(to), toLong(past));
-        StringBuilder sb = new StringBuilder();
-        sb.append(jsonUtil.toJson(child));
-        return sb.toString();
+        StatDetails child = stat(id, toLong(from), toLong(to), toLong(past));
+        return jsonUtil.toJson(child.getMerged());
+    }
+
+    @GET
+    @Path("ui/data/details/{id}")
+    @Produces("application/json")
+    public String details(@PathParam("id") String id, @QueryParam("from") String from, @QueryParam("to") String to,
+                      @QueryParam("past") String past){
+        StatDetails child = stat(id, toLong(from), toLong(to), toLong(past));
+        return jsonUtil.toJson(child);
     }
 
     private Long toLong(String value){
@@ -62,13 +71,14 @@ public class StorageStatsUiController extends StaticResourceController{
     }
 
     //TODO cache?
-    private Stat stat(String id, Long from, Long to, Long past){
+    private StatDetails stat(String id, Long from, Long to, Long past){
         if( past != null ){
             to = System.currentTimeMillis();
             from = to - past;
         }
         if( !isRange(from, to) ){
-            return Endoscope.processStats(stats -> stats.getMap().get(id).deepCopy());
+            Stat stat = Endoscope.processStats(stats -> stats.getMap().get(id).deepCopy());
+            return new StatDetails(stat);
         }
         return getSearchableStatsStorage().stat(id, new Date(from), new Date(to));
     }

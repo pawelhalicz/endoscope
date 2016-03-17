@@ -1,6 +1,5 @@
 package org.endoscope.storage;
 
-import org.endoscope.core.Stat;
 import org.endoscope.core.Stats;
 
 import java.util.Date;
@@ -27,5 +26,5 @@ public interface SearchableStatsStorage {
      * @param to required
      * @return
      */
-    Stat stat(String id, Date from, Date to);
+    StatDetails stat(String id, Date from, Date to);
 }

@@ -15,6 +15,7 @@ import java.util.zip.GZIPOutputStream;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+//TODO merge with SearchableGzipFileStorage and move to ui module? Only interfaces should stay here.
 /**
  * Simple gzip file store. Dumps whole stats to JSON.
  *
@@ -89,8 +90,12 @@ public class GzipFileStorage implements StatsStorage {
         return toStatsInfo(arr);
     }
 
-    public Stats load(String name) throws IOException {
-        return readFromGzipFile(name);
+    public Stats load(String name) {
+        try {
+            return readFromGzipFile(name);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String buildPartName(Date dateStart, Date dateEnd) {

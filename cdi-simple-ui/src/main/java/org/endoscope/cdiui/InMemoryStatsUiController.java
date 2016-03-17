@@ -29,6 +29,11 @@ public class InMemoryStatsUiController extends StaticResourceController {
     @Path("ui/data/sub/{id}")
     @Produces("application/json")
     public String sub(@PathParam("id") String id){
+        //TODO add top level stats cache and/or invalidation token
+        // There is a problem with data consistency between UI and server side.
+        // After save stats gets cleared. Because of that stats presented in the browser might no longer reflect
+        // stats held on the server. Due to that fact requested ID might no longer be available.
+
         return Endoscope.processStats(stats -> {
             Stat child = stats.getMap().get(id);
             return jsonUtil.toJson(child);

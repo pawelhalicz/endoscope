@@ -5,12 +5,6 @@ import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-/**
- * Date: 29/02/16
- * Time: 15:04
- *
- * @author p.halicz
- */
 public class StatsStorageFactory {
     private static final Logger log = getLogger(StatsStorageFactory.class);
 

@@ -10,8 +10,10 @@
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.flot.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.flot.time.min.js"></script>
+    <script language="javascript" type="text/javascript" src="ui/res/lib/flot/jquery.flot.fillbetween.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/bootstrap/js/bootstrap.min.js"></script>
     <script language="javascript" type="text/javascript" src="ui/res/lib/jquery.typewatch.js"></script>
+
 
     <script src="ui/res/endoscope.js"></script>
 
@@ -22,7 +24,7 @@
         <table class="es-table table table-hover">
             <thead>
                 <tr>
-                    <th data-sort="id"><span />Identifier</th>
+                    <th class="es-id" data-sort="id"><span />Identifier</th>
                     <th data-sort="hits"><span />Hits</th>
                     <th data-sort="max"><span />Max [ms]</th>
                     <th data-sort="min"><span />Min [ms]</th>
@@ -44,6 +46,18 @@
         </tr>
     </script>
 
+    <script id="es-chart-row-template" type="text/x-custom-template">
+        <tr class="es-row es-chart">
+            <td colspan="5">
+                <div class="es-chart-container"></div>
+                <!-- TODO
+                <div class="es-time-label">Time (ms)</div>
+                <div class="es-hits-label">Hits</div>
+                -->
+            </td>
+        </tr>
+    </script>
+
     <script id="es-indent-template" type="text/x-custom-template">
         <span class="es-indent"></span>
     </script>
@@ -53,7 +67,7 @@
     </script>
 
     <script id="es-warn-template" type="text/x-custom-template">
-        <span class="label label-primary"></span>
+        <span class="label label-warning"></span>
     </script>
 
 </head>
