@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatDetails {
+    private String id;
     private Stat merged;
     private List<StatHistory> histogram = new ArrayList<>();
 
@@ -15,6 +16,14 @@ public class StatDetails {
 
     public StatDetails(Stat merged) {
         this.merged = merged;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Stat getMerged() {

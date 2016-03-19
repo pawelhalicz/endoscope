@@ -37,6 +37,7 @@ public class SearchableGzipFileStorage extends GzipFileStorage implements Search
     public StatDetails stat(String id, Date from, Date to) {
         log.info("Searching for stat {} from {} to {}", id, getDateFormat().format(from), getDateFormat().format(to));
         StatDetails result = new StatDetails();
+        result.setId(id);
 
         listParts().stream()
                 .peek( statsInfo -> log.info("Checking {}", statsInfo.getName()))

@@ -177,7 +177,7 @@
 
     var onDetailStatsReceive = function(details, parentRow, level) {
         processChildStats(details.merged, parentRow, level);
-        buildChartRow(details.histogram, parentRow);
+        buildDetails(details, parentRow);
     };
 
     var processChildStats = function(parentStat, parentRow, level) {
@@ -203,10 +203,11 @@
         return options.past > 2 * 86400000;
     };
 
-    var buildChartRow = function(histogram, parentRow){
-        var row = $($("#es-chart-row-template").html());
-        parentRow.after(row);
+    var buildDetails = function(details, parentRow){
+        $(".es-details").show();
+        $(".es-details .es-title").text(details.id);
 
+        var histogram = details.histogram;
         var chartOptions = {
             legend: {
                 backgroundColor: null,
@@ -244,14 +245,16 @@
             { id: "max",  data: extractSeries(histogram, "max"),  lines: { show: true, lineWidth: 0, fill: 0.4 }, color: "#33b5e5", fillBetween: "min"},
             { label: "Average Time [ms]", id: "avg",  data: extractSeries(histogram, "avg"), lines: { show: true, lineWidth: 3 }, color: "#33b5e5" }
         ];
-        container = row.find("td .es-chart-container");
+        container = $(".es-details .es-chart-times");
+        container.empty();
         opts = $.extend(true, {}, chartOptions, {yaxis: {tickFormatter: function (x) {return x + " ms";}}});
         $.plot(container, data, opts);
 
         data = [
             { label: "Hits per second", id: "hits", data: extractSeries(histogram, "hits"), lines: { show: true, steps: true, lineWidth: 3, fill: 0.7 }, color: "#5cb85c"}
         ];
-        container = row.find("td .es-chart-hits-container");
+        container = $(".es-details .es-chart-hits");
+        container.empty();
         opts = $.extend(true, {}, chartOptions, {yaxis: {tickDecimals: 2}});
         $.plot(container, data, opts);
 
