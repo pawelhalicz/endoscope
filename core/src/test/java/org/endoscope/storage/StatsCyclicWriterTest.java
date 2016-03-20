@@ -1,6 +1,7 @@
 package org.endoscope.storage;
 
 import org.endoscope.core.Stats;
+import org.endoscope.util.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

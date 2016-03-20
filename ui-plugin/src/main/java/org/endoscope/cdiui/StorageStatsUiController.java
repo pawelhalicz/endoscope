@@ -3,7 +3,7 @@ package org.endoscope.cdiui;
 import org.endoscope.Endoscope;
 import org.endoscope.core.Stat;
 import org.endoscope.core.Stats;
-import org.endoscope.storage.JsonUtil;
+import org.endoscope.util.JsonUtil;
 import org.endoscope.storage.SearchableStatsStorage;
 import org.endoscope.storage.StatDetails;
 import org.slf4j.Logger;

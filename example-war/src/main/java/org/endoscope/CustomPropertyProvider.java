@@ -2,7 +2,7 @@ package org.endoscope;
 
 import org.endoscope.properties.AbstractCustomPropertyProvider;
 import org.endoscope.properties.Properties;
-import org.endoscope.storage.SearchableGzipFileStorage;
+import org.endoscope.storage.gzip.SearchableGzipFileStorage;
 import org.slf4j.Logger;
 
 import java.nio.file.Files;

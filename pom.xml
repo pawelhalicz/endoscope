@@ -21,8 +21,10 @@
 	<modules>
 		<module>core</module>
 		<module>cdi-plugin</module>
-		<module>cdi-simple-ui</module>
+		<module>ui-plugin</module>
 		<module>example-war</module>
+		<module>storage-gzip</module>
+		<module>storage-jdbc</module>
 	</modules>
 
 	<build>
@@ -55,7 +57,17 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>cdi-simple-ui</artifactId>
+				<artifactId>ui-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>storage-gzip</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>storage-jdbc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -95,6 +107,11 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
+            </dependency>
+			<dependency>
+                <groupId>commons-dbutils</groupId>
+                <artifactId>commons-dbutils</artifactId>
+                <version>1.6</version>
             </dependency>
 			<dependency>
 				<groupId>javax</groupId>

@@ -2,6 +2,7 @@ package org.endoscope.storage;
 
 import org.endoscope.core.Stats;
 import org.endoscope.properties.Properties;
+import org.endoscope.util.DateUtil;
 import org.slf4j.Logger;
 
 import java.util.Date;
@@ -49,11 +50,21 @@ public class StatsCyclicWriter {
     public void safeSave(Stats stats){
         try{
             if( statsStorage != null ){
+                ensureDatesAreSet(stats);
                 statsStorage.save(stats);
                 lastSave = dateUtil.now();
             }
         }catch(Exception e){
             log.error("failed to save stats", e);
+        }
+    }
+
+    private void ensureDatesAreSet(Stats stats) {
+        if( stats.getStartDate() == null ){
+            stats.setStartDate(new Date());
+        }
+        if( stats.getEndDate() == null ){
+            stats.setEndDate(new Date());
         }
     }
 

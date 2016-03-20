@@ -23,7 +23,15 @@
         </dependency>
         <dependency>
             <groupId>org.endoscope</groupId>
-            <artifactId>cdi-simple-ui</artifactId>
+            <artifactId>ui-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>storage-gzip</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>storage-jdbc</artifactId>
         </dependency>
     </dependencies>
 

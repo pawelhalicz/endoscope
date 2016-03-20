@@ -1,4 +1,4 @@
-package org.endoscope.storage;
+package org.endoscope.util;
 
 import java.io.File;
 import java.io.IOException;

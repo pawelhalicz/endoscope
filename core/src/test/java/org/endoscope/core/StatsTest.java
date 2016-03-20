@@ -1,15 +1,15 @@
 package org.endoscope.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.endoscope.properties.Properties;
-import org.endoscope.storage.JsonUtil;
+import org.endoscope.util.JsonUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.endoscope.core.PropertyTestUtil.withProperty;
 

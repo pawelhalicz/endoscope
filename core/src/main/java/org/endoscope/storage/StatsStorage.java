@@ -1,18 +1,19 @@
 package org.endoscope.storage;
 
-import java.io.IOException;
-
 import org.endoscope.core.Stats;
+
+import java.io.IOException;
 
 /**
  * Implementation class should have public constructor that accepts single String parameter.
  */
-public interface StatsStorage {
+public abstract class StatsStorage {
+    public StatsStorage(String initParam){}
     /**
      * Save stats.
      * @param stats
      * @return stats identifier
      * @throws IOException
      */
-    String save(Stats stats) throws IOException;
+    public abstract String save(Stats stats) throws IOException;
 }

@@ -1,14 +1,16 @@
-package org.endoscope.storage;
+package org.endoscope.storage.gzip;
 
 import org.endoscope.core.Stat;
 import org.endoscope.core.Stats;
+import org.endoscope.storage.SearchableStatsStorage;
+import org.endoscope.storage.StatDetails;
+import org.endoscope.storage.StatHistory;
 import org.slf4j.Logger;
 
 import java.util.Date;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-//TODO move it to ui module?
 /**
  * This storage is for demo purposes as it's not efficient.
  * Notice that it loads complete stats in order to extract just part of it.

@@ -1,9 +1,9 @@
-package org.endoscope.storage;
+package org.endoscope.storage.gzip;
 
 import java.beans.Transient;
 import java.util.Date;
 
-public class StatsInfo {
+public class GzipFileInfo {
     private String name;
     private Date fromDate;
     private Date toDate;
@@ -35,13 +35,13 @@ public class StatsInfo {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof StatsInfo)) return false;
+        if (!(o instanceof GzipFileInfo)) return false;
 
-        StatsInfo statsInfo = (StatsInfo) o;
+        GzipFileInfo gzipFileInfo = (GzipFileInfo) o;
 
-        if (name != null ? !name.equals(statsInfo.name) : statsInfo.name != null) return false;
-        if (fromDate != null ? !fromDate.equals(statsInfo.fromDate) : statsInfo.fromDate != null) return false;
-        return toDate != null ? toDate.equals(statsInfo.toDate) : statsInfo.toDate == null;
+        if (name != null ? !name.equals(gzipFileInfo.name) : gzipFileInfo.name != null) return false;
+        if (fromDate != null ? !fromDate.equals(gzipFileInfo.fromDate) : gzipFileInfo.fromDate != null) return false;
+        return toDate != null ? toDate.equals(gzipFileInfo.toDate) : gzipFileInfo.toDate == null;
 
     }
 

@@ -1,7 +1,9 @@
-package org.endoscope.storage;
+package org.endoscope.storage.gzip;
 
 import org.apache.commons.io.IOUtils;
 import org.endoscope.core.Stats;
+import org.endoscope.storage.StatsStorage;
+import org.endoscope.util.JsonUtil;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -15,13 +17,12 @@ import java.util.zip.GZIPOutputStream;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-//TODO merge with SearchableGzipFileStorage and move to ui module? Only interfaces should stay here.
 /**
  * Simple gzip file store. Dumps whole stats to JSON.
  *
  * Search capabilities are for test/demo purposes rather than for practical use on larger stats.
  */
-public class GzipFileStorage implements StatsStorage {
+public class GzipFileStorage extends StatsStorage {
     private static final Logger log = getLogger(GzipFileStorage.class);
 
     public static final String PREFIX = "stats";
@@ -45,6 +46,8 @@ public class GzipFileStorage implements StatsStorage {
     }
 
     public GzipFileStorage(File dir){
+        super(null);
+
         this.dir = dir;
         if( dir.exists() && dir.isFile() ){
             throw new RuntimeException("location exists and is a file - cannot use it as storage directory: " + dir.getAbsolutePath());
@@ -57,17 +60,16 @@ public class GzipFileStorage implements StatsStorage {
 
     @Override
     public String save(Stats stats) throws IOException {
-        ensureDatesAreSet(stats);
         String fileName = buildPartName(stats.getStartDate(), stats.getEndDate());
         return writeToGzipFile(stats, fileName).getName();
     }
 
-    public List<StatsInfo> listParts(){
+    public List<GzipFileInfo> listParts(){
         String[] arr = dir.list((dir, name) -> NAME_PATTERN.matcher(name).matches());
         return toStatsInfo(arr);
     }
 
-    private List<StatsInfo> toStatsInfo(String[] arr) {
+    private List<GzipFileInfo> toStatsInfo(String[] arr) {
         return Arrays.asList(arr).stream()
                 .sorted()
                 .map( name -> safeParseName(name))
@@ -75,14 +77,14 @@ public class GzipFileStorage implements StatsStorage {
                 .collect(Collectors.toList());
     }
 
-    public List<StatsInfo> findParts(Date from, Date to) {
+    public List<GzipFileInfo> findParts(Date from, Date to) {
         if( from == null || to == null || to.before(from) ){
             return Collections.emptyList();
         }
 
         String[] arr = dir.list((dir, name) -> {
             if( NAME_PATTERN.matcher(name).matches() ){
-                StatsInfo info = safeParseName(name);
+                GzipFileInfo info = safeParseName(name);
                 return info != null && info.inRange(from, to);
             }
             return false;
@@ -109,21 +111,21 @@ public class GzipFileStorage implements StatsStorage {
         return sdf;
     }
 
-    private StatsInfo safeParseName(String name) {
-        StatsInfo statsInfo = new StatsInfo();
-        statsInfo.setName(name);
+    private GzipFileInfo safeParseName(String name) {
+        GzipFileInfo gzipFileInfo = new GzipFileInfo();
+        gzipFileInfo.setName(name);
         DateFormat sdf = getDateFormat();
         try{
             String noExtension = name.substring(0, name.length() - EXTENSION.length());
             String[] parts = noExtension.split(SEPARATOR);
             if( parts.length == 3 ){
-                statsInfo.setFromDate(sdf.parse(parts[1]));
-                statsInfo.setToDate(sdf.parse(parts[2]));
+                gzipFileInfo.setFromDate(sdf.parse(parts[1]));
+                gzipFileInfo.setToDate(sdf.parse(parts[2]));
             }
         }catch(Exception e){
             log.warn("Problem parsing stats file name: {}", name, e);
         }
-        return statsInfo;
+        return gzipFileInfo;
     }
 
     private File buildFile(String fileName){
@@ -150,15 +152,6 @@ public class GzipFileStorage implements StatsStorage {
             return jsonUtil.fromJson(Stats.class, in);
         } finally {
             IOUtils.closeQuietly(in);
-        }
-    }
-
-    private void ensureDatesAreSet(Stats stats) {
-        if( stats.getStartDate() == null ){
-            stats.setStartDate(new Date());
-        }
-        if( stats.getEndDate() == null ){
-            stats.setEndDate(new Date());
         }
     }
 }
