@@ -2,8 +2,6 @@ package org.endoscope.storage;
 
 import org.endoscope.core.Stats;
 
-import java.io.IOException;
-
 /**
  * Implementation class should have public constructor that accepts single String parameter.
  */
@@ -13,7 +11,6 @@ public abstract class StatsStorage {
      * Save stats.
      * @param stats
      * @return stats identifier
-     * @throws IOException
      */
-    public abstract String save(Stats stats) throws IOException;
+    public abstract String save(Stats stats);
 }

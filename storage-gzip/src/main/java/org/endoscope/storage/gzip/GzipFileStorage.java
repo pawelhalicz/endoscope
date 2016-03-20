@@ -59,9 +59,13 @@ public class GzipFileStorage extends StatsStorage {
     }
 
     @Override
-    public String save(Stats stats) throws IOException {
+    public String save(Stats stats) {
         String fileName = buildPartName(stats.getStartDate(), stats.getEndDate());
-        return writeToGzipFile(stats, fileName).getName();
+        try {
+            return writeToGzipFile(stats, fileName).getName();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<GzipFileInfo> listParts(){

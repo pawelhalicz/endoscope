@@ -42,11 +42,11 @@ public class SearchableGzipFileStorage extends GzipFileStorage implements Search
         result.setId(id);
 
         listParts().stream()
-                .peek( statsInfo -> log.info("Checking {}", statsInfo.getName()))
-                .filter(statsInfo -> statsInfo.inRange(from, to))
-                .peek( statsInfo -> log.info("Matches: {}", statsInfo.getName()))
-                .forEach( statsInfo -> {
-                    Stats stats = load(statsInfo.getName());
+                .peek( fileInfo -> log.info("Checking {}", fileInfo.getName()))
+                .filter(fileInfo -> fileInfo.inRange(from, to))
+                .peek( fileInfo -> log.info("Matches: {}", fileInfo.getName()))
+                .forEach( fileInfo -> {
+                    Stats stats = load(fileInfo.getName());
                     Stat details = stats.getMap().get(id);
                     if( details != null ){
                         result.getMerged().merge(details, true);

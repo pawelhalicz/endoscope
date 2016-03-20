@@ -19,7 +19,7 @@ public class StatsStorageFactoryTest {
         }
 
         @Override
-        public String save(Stats stats) throws IOException {
+        public String save(Stats stats) {
             return "OK";
         }
     }
