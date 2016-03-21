@@ -58,7 +58,7 @@ public class JdbcStorage extends StatsStorage {
                     }
 
                     Object[][] data = prepareStatsData(groupId, stats);
-                    int[] result = run.batch(conn, "INSERT INTO endoscopeStat(id, group, parent, root, name, hits, max, min, avg, ah10) values(?,?,?,?,?,?,?,?,?,?)", data);
+                    int[] result = run.batch(conn, "INSERT INTO endoscopeStat(id, groupId, parentId, rootId, name, hits, max, min, avg, ah10) values(?,?,?,?,?,?,?,?,?,?)", data);
                     int inserts = Arrays.stream(result).sum();
                     if( inserts != data.length ){
                         throw new RuntimeException("Failed to insert stats. Expected " + data.length + " but got: " + inserts);
@@ -79,14 +79,14 @@ public class JdbcStorage extends StatsStorage {
     private Object[][] prepareStatsData(String groupId, Stats stats) {
         List<Object[]> list = new ArrayList<>();
         process(groupId, null, null, stats.getMap(), list);
-        return list.toArray(new Object[8][list.size()]);
+        return list.toArray(new Object[0][0]);
     }
 
     private void process(String groupId, String parentId, String rootId, Map<String, Stat> map, List<Object[]> list){
         map.forEach((statName, stat) -> {
             String statId = UUID.randomUUID().toString();
             list.add(new Object[]{
-                    statId, groupId, parentId, statName,
+                    statId, groupId, parentId, rootId, statName,
                     stat.getHits(), stat.getMax(), stat.getMin(), stat.getAvg(), stat.getAh10()
             });
             if( stat.getChildren() != null ){
@@ -99,38 +99,29 @@ public class JdbcStorage extends StatsStorage {
     private void ensureTableExists() {
         //this is DB specific - so far just for H2
         try {
-            List<Map<String, Object>> result = run.query("SHOW COLUMNS FROM endoscope", handler);
-            if( result.size() == 0 ){
-                int updated = run.update(
-                        "CREATE TABLE endoscopeGroup(" +
-                        "  id VARCHAR(36) PRIMARY KEY, " +
-                        "  startDate TIMESTAMP, " +
-                        "  endDate TIMESTAMP, " +
-                        "  statsLeft INT, " +
-                        "  lost INT, " +
-                        "  fatalError VARCHAR(255)" +
-                        ")");
-                if( updated != 1 ){
-                    throw new RuntimeException("Failed to create SQL stats group table");
-                }
+            run.update(
+                    "CREATE TABLE IF NOT EXISTS endoscopeGroup(" +
+                    "  id VARCHAR(36) PRIMARY KEY, " +
+                    "  startDate TIMESTAMP, " +
+                    "  endDate TIMESTAMP, " +
+                    "  statsLeft INT, " +
+                    "  lost INT, " +
+                    "  fatalError VARCHAR(255)" +
+                    ")");
 
-                updated = run.update(
-                        "CREATE TABLE endoscopeStat(" +
-                        "  id VARCHAR(36) PRIMARY KEY, " +
-                        "  group VARCHAR(36), " +
-                        "  parent VARCHAR(36), " +
-                        "  root VARCHAR(36), " +
-                        "  name VARCHAR(255), " +
-                        "  hits INT, " +
-                        "  max INT, " +
-                        "  min INT, " +
-                        "  avg INT, " +
-                        "  ah10 INT " +
-                        ")");
-                if( updated != 1 ){
-                    throw new RuntimeException("Failed to create SQL stats table");
-                }
-            }
+            run.update(
+                    "CREATE TABLE IF NOT EXISTS endoscopeStat(" +
+                    "  id VARCHAR(36) PRIMARY KEY, " +
+                    "  groupId VARCHAR(36), " +
+                    "  parentId VARCHAR(36), " +
+                    "  rootId VARCHAR(36), " +
+                    "  name VARCHAR(255), " +
+                    "  hits INT, " +
+                    "  max INT, " +
+                    "  min INT, " +
+                    "  avg INT, " +
+                    "  ah10 INT " +
+                    ")");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

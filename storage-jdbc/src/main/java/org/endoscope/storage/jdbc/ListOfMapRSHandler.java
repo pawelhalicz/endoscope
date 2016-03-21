@@ -8,10 +8,6 @@ import java.util.*;
 
 public class ListOfMapRSHandler implements ResultSetHandler<List<Map<String, Object>>> {
     public List<Map<String, Object>> handle(ResultSet rs) throws SQLException {
-        if (!rs.next()) {
-            return Collections.emptyList();
-        }
-
         int columns = rs.getMetaData().getColumnCount();
         List result = new ArrayList<>();
         while (rs.next()) {

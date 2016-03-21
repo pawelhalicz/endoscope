@@ -54,7 +54,7 @@ public class SearchableJdbcStorage extends JdbcStorage implements SearchableStat
                     " select " +
                     "  name, hits, max, min, avg, ah10 " +
                     " from endoscopeStat " +
-                    " where parent is null and group = ?", handler, group.getId());
+                    " where parentId is null and groupId = ?", handler, group.getId());
 
             stats.forEach( data -> {
                 String statName = data.get("name").toString();
@@ -120,7 +120,7 @@ public class SearchableJdbcStorage extends JdbcStorage implements SearchableStat
                     " select " +
                     "  id, hits, max, min, avg, ah10 " +
                     " from endoscopeStat " +
-                    " where parent is null and group = ? and name = ?", handler, groupId, rootName);
+                    " where parentId is null and groupId = ? and name = ?", handler, groupId, rootName);
 
             Map<String, Object> rootData = rootDataList.get(0);
             if( rootDataList.size() != 1 || rootData.get("id") == null ){
@@ -142,13 +142,13 @@ public class SearchableJdbcStorage extends JdbcStorage implements SearchableStat
         //TODO switch to ResultSetHandler<Map<Long, Person>> h = new BeanMapdHandler<Long, Person>(Person.class, "id");
         List<Map<String, Object>> stats = run.query(
                 " select " +
-                "  parent, name, hits, max, min, avg, ah10 " +
+                "  parentId, name, hits, max, min, avg, ah10 " +
                 " from endoscopeStat " +
-                " where group = ? and root = ?", handler, groupId, rootId);
+                " where groupId = ? and rootId = ?", handler, groupId, rootId);
 
         Map<String, List<StatInfo>> statsByParentId = new HashMap<>();
         stats.forEach( data -> {
-            String statParentId = data.get("parent").toString();
+            String statParentId = data.get("parentId").toString();
             StatInfo statInfo = new StatInfo();
             statInfo.setName(data.get("name").toString());
             statInfo.setStat(toStat(data));
