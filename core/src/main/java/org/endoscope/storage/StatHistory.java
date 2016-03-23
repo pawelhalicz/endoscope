@@ -8,7 +8,7 @@ public class StatHistory {
     private long hits = 0;
     private long max = -1;//-1 means it's not set
     private long min = 0;
-    private double avg = 0;
+    private long avg = 0;
     private Date startDate;
     private Date endDate;
 
@@ -46,11 +46,11 @@ public class StatHistory {
         this.min = min;
     }
 
-    public double getAvg() {
+    public long getAvg() {
         return avg;
     }
 
-    public void setAvg(double avg) {
+    public void setAvg(long avg) {
         this.avg = avg;
     }
 

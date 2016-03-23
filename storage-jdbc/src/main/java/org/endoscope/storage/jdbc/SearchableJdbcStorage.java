@@ -52,13 +52,17 @@ public class SearchableJdbcStorage extends JdbcStorage implements SearchableStat
             //TODO switch to ResultSetHandler<Map<Long, Person>> h = new BeanMapdHandler<Long, Person>(Person.class, "id");
             List<Map<String, Object>> stats = run.query(
                     " select " +
-                    "  name, hits, max, min, avg, ah10 " +
+                    "  name, hits, max, min, avg, ah10, hasChildren " +
                     " from endoscopeStat " +
                     " where parentId is null and groupId = ?", handler, group.getId());
 
             stats.forEach( data -> {
                 String statName = data.get("name").toString();
+                boolean hasChildren = (Boolean)data.get("hasChildren");
                 Stat stat = toStat(data);
+                if( hasChildren ){
+                    stat.ensureChildrenMap();
+                }
                 group.getMap().put(statName, stat);
             });
         } catch (SQLException e) {
@@ -91,7 +95,7 @@ public class SearchableJdbcStorage extends JdbcStorage implements SearchableStat
 
     @Override
     public StatDetails stat(String id, Date from, Date to) {
-        StatDetails result = new StatDetails();
+        StatDetails result = new StatDetails(null);
         result.setId(id);
 
         List<Group> groups = findByDates(from, to);
@@ -99,7 +103,11 @@ public class SearchableJdbcStorage extends JdbcStorage implements SearchableStat
             Stat details = loadTree(g.getId(), id);
 
             if( details != null ){
-                result.getMerged().merge(details, true);
+                if( result.getMerged() == null ){
+                    result.setMerged(details.deepCopy(true));
+                } else {
+                    result.getMerged().merge(details, true);
+                }
                 //TODO merge to no more than 100 points
                 result.getHistogram().add(
                         new StatHistory(
@@ -110,6 +118,9 @@ public class SearchableJdbcStorage extends JdbcStorage implements SearchableStat
 
             }
         });
+        if( result.getMerged() == null ){
+            result.setMerged(new Stat());
+        }
         return result;
     }
 

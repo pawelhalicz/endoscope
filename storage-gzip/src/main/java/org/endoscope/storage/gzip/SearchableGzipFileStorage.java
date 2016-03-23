@@ -38,7 +38,7 @@ public class SearchableGzipFileStorage extends GzipFileStorage implements Search
     @Override
     public StatDetails stat(String id, Date from, Date to) {
         log.info("Searching for stat {} from {} to {}", id, getDateFormat().format(from), getDateFormat().format(to));
-        StatDetails result = new StatDetails();
+        StatDetails result = new StatDetails(null);
         result.setId(id);
 
         listParts().stream()
@@ -49,7 +49,11 @@ public class SearchableGzipFileStorage extends GzipFileStorage implements Search
                     Stats stats = load(fileInfo.getName());
                     Stat details = stats.getMap().get(id);
                     if( details != null ){
-                        result.getMerged().merge(details, true);
+                        if( result.getMerged() == null ){
+                            result.setMerged(details.deepCopy(true));
+                        } else {
+                            result.getMerged().merge(details, true);
+                        }
                         //TODO merge to no more than 100 points
                         result.getHistogram().add(
                                 new StatHistory(
@@ -60,6 +64,9 @@ public class SearchableGzipFileStorage extends GzipFileStorage implements Search
 
                     }
                 });
+        if( result.getMerged() == null ){
+            result.setMerged(new Stat());
+        }
         return result;
     }
 }

@@ -58,7 +58,7 @@ public class JdbcStorage extends StatsStorage {
                     }
 
                     Object[][] data = prepareStatsData(groupId, stats);
-                    int[] result = run.batch(conn, "INSERT INTO endoscopeStat(id, groupId, parentId, rootId, name, hits, max, min, avg, ah10) values(?,?,?,?,?,?,?,?,?,?)", data);
+                    int[] result = run.batch(conn, "INSERT INTO endoscopeStat(id, groupId, parentId, rootId, name, hits, max, min, avg, ah10, hasChildren) values(?,?,?,?,?,?,?,?,?,?,?)", data);
                     int inserts = Arrays.stream(result).sum();
                     if( inserts != data.length ){
                         throw new RuntimeException("Failed to insert stats. Expected " + data.length + " but got: " + inserts);
@@ -87,7 +87,8 @@ public class JdbcStorage extends StatsStorage {
             String statId = UUID.randomUUID().toString();
             list.add(new Object[]{
                     statId, groupId, parentId, rootId, statName,
-                    stat.getHits(), stat.getMax(), stat.getMin(), stat.getAvg(), stat.getAh10()
+                    stat.getHits(), stat.getMax(), stat.getMin(), stat.getAvg(), stat.getAh10(),
+                    stat.getChildren() != null
             });
             if( stat.getChildren() != null ){
                 String currentRoot = rootId == null ? statId : rootId;
@@ -120,7 +121,8 @@ public class JdbcStorage extends StatsStorage {
                     "  max INT, " +
                     "  min INT, " +
                     "  avg INT, " +
-                    "  ah10 INT " +
+                    "  ah10 INT, " +
+                    "  hasChildren BOOLEAN " +
                     ")");
         } catch (SQLException e) {
             throw new RuntimeException(e);
