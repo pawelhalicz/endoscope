@@ -10,11 +10,15 @@ public class Properties {
     public static String SAVE_FREQ_MINUTES = "endoscope.save.feq.minutes";//set to <= 0 in order to disable
     public static String STATS_STORAGE_CLASS = "endoscope.storage.class";
     public static String STATS_STORAGE_CLASS_INIT_PARAM = "endoscope.storage.class.init.param";
+    public static String MAX_ID_LENGTH = "endoscope.max.id.length";
 
     public static String DEFAULT_MAX_STAT_COUNT = "300000";
     public static String DEFAULT_SUPPORTED_NAMES = ".*(Bean|Service|Controller|Ejb|EJB)";
     public static String DEFAULT_QUEUE_MAX_SIZE = "1000000";
     public static String DEFAULT_SAVE_FREQ_MINUTES = "5";
+    public static String DEFAULT_MAX_ID_LENGTH = "100";
+
+
 
     private static final PropertyProvider propertyProvider = PropertyProviderFactory.create();
 
@@ -87,5 +91,9 @@ public class Properties {
 
     public static String getStatsStorageClass(){
         return safeGetProperty(STATS_STORAGE_CLASS, null);
+    }
+
+    public static int getMaxIdLength(){
+        return Integer.valueOf(safeGetProperty(MAX_ID_LENGTH, DEFAULT_MAX_ID_LENGTH));
     }
 }

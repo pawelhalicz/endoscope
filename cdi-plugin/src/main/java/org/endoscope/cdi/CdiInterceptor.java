@@ -18,13 +18,18 @@ public class CdiInterceptor {
             return ctx.proceed();
         }
 
+        boolean first = false;
         try {
-            Endoscope.push(getCallNameFromContext(ctx));
+            first = Endoscope.push(getCallNameFromContext(ctx));
             return ctx.proceed();
         } catch (final Error e) {
             throw e;
         } finally {
-            Endoscope.pop();
+            if( first ){
+                Endoscope.popAll();
+            }else {
+                Endoscope.pop();
+            }
         }
     }
 

@@ -16,12 +16,28 @@ public class Endoscope {
         return ENGINE.isEnabled();
     }
 
-    public static void push(String id){
-        ENGINE.push(id);
+    /**
+     *
+     * @param id required, might get cut if too long
+     * @return true if it was first element pushed to call stack
+     */
+    public static boolean push(String id){
+        return ENGINE.push(id);
     }
 
     public static void pop(){
         ENGINE.pop();
+    }
+
+    /**
+     * Use it to finalize collecting data for current thread.
+     * When Endoscope is correctly used in try/finally it just pops latest element.
+     *
+     * It may however prevent memory leak when Endoscope stack is not cleaned up correctly.
+     * For example when pop is not put in finally and exception occurs.
+     */
+    public static void popAll(){
+        ENGINE.popAll();
     }
 
     /**
